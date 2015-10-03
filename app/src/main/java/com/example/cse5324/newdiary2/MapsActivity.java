@@ -1,10 +1,16 @@
 package com.example.cse5324.newdiary2;
 
+import android.app.FragmentManager;
 import android.content.IntentSender;
 import android.location.Location;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 
 import com.google.android.gms.common.ConnectionResult;
@@ -19,9 +25,11 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements
+public class MapsActivity extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,LocationListener{
+
+    private static View view;
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GoogleApiClient mGoogleApiClient;
@@ -29,33 +37,47 @@ public class MapsActivity extends FragmentActivity implements
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
 
+    public static MapsActivity newInstance() {
+        MapsActivity fragment = new MapsActivity();
+        return fragment;
+    }
+
+    public MapsActivity() {
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        if (container == null) {
+            return null;
+        }
+        view = (RelativeLayout) inflater.inflate(R.layout.activity_maps, container, false);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        setUpMapIfNeeded();
+
+        setUpMapIfNeeded(); // For setting up the MapFragment
 
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1000); // 1 second, in milliseconds
+
+        return view;
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         setUpMapIfNeeded();
         mGoogleApiClient.connect();
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -67,9 +89,9 @@ public class MapsActivity extends FragmentActivity implements
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
-            // Try to obtain the map from the SupportMapFragment.
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
+
+           mMap = ((SupportMapFragment) getChildFragmentManager()
+                    .findFragmentById(R.id.map)).getMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 setUpMap();
@@ -112,7 +134,7 @@ public class MapsActivity extends FragmentActivity implements
         if (connectionResult.hasResolution()) {
             try {
                 // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                connectionResult.startResolutionForResult(getActivity(), CONNECTION_FAILURE_RESOLUTION_REQUEST);
             } catch (IntentSender.SendIntentException e) {
                 e.printStackTrace();
             }
@@ -143,6 +165,34 @@ public class MapsActivity extends FragmentActivity implements
                 .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                 .build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        if (mMap != null)
+            setUpMap();
+
+        if (mMap == null) {
+            // Try to obtain the map from the SupportMapFragment.
+            mMap = ((SupportMapFragment) getChildFragmentManager()
+                    .findFragmentById(R.id.map)).getMap(); // getMap is deprecated
+            // Check if we were successful in obtaining the map.
+            if (mMap != null)
+                setUpMap();
+        }
+    }
+
+    /**** The mapfragment's id must be removed from the FragmentManager
+     **** or else if the same it is passed on the next time then
+     **** app will crash ****/
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mMap != null) {getFragmentManager().beginTransaction().remove(
+                    getFragmentManager().findFragmentById(R.id.map)).commit();
+            mMap = null;
+        }
     }
 
     @Override

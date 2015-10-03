@@ -66,6 +66,10 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.beginTransaction()
                     .replace(R.id.container, CalendarActivity.newInstance())
                     .commit();
+        } else if (position == 5){
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, MapsActivity.newInstance())
+                    .commit();
         }
 
     }
