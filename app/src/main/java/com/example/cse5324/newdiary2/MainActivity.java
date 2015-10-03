@@ -62,6 +62,11 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.container, FourthFragment.newInstance())
                     .commit();
         }
+        else if (position == 4){
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, CalendarActivity.newInstance())
+                    .commit();
+        }
 
     }
 

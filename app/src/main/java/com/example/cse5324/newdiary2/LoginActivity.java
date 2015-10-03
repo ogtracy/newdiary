@@ -55,12 +55,12 @@ public class LoginActivity extends AppCompatActivity  {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                p2.requestFocus();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                p2.requestFocus();
+
             }
         });
 
@@ -72,12 +72,12 @@ public class LoginActivity extends AppCompatActivity  {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                p3.requestFocus();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                p3.requestFocus();
+
             }
         });
 
@@ -89,12 +89,12 @@ public class LoginActivity extends AppCompatActivity  {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                p4.requestFocus();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                p4.requestFocus();
+
             }
         });
     }

@@ -44,7 +44,7 @@ public class MapsActivity extends FragmentActivity implements
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+                .setFastestInterval(1000); // 1 second, in milliseconds
     }
 
     @Override
@@ -98,7 +98,7 @@ public class MapsActivity extends FragmentActivity implements
         }
         else {
             handleNewLocation(location);
-        };
+        }
     }
 
     @Override
