@@ -6,6 +6,7 @@ import android.location.Location;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -188,11 +189,16 @@ public class MapsActivity extends Fragment implements
      **** app will crash ****/
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        if (mMap != null) {getFragmentManager().beginTransaction().remove(
-                    getFragmentManager().findFragmentById(R.id.map)).commit();
-            mMap = null;
+
+        if (mMap != null) {
+            //android.support.v4.app.FragmentManager man = getChildFragmentManager();
+            //Fragment frag = man.findFragmentById(R.id.map);
+            //FragmentTransaction tra = man.beginTransaction();
+            //tra.remove(frag);
+            //tra.commit();
+            //mMap = null;
         }
+        super.onDestroyView();
     }
 
     @Override
