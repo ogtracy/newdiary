@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,6 +9,12 @@
     android:paddingTop="16dp"
     android:paddingBottom="16dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -16,16 +22,18 @@
             android:id="@+id/textView"
             android:layout_gravity="center_horizontal|top"
             android:textColor="#115b22"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_weight="1" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
+            android:id="@+id/nickname"
             android:layout_gravity="left|top"
             android:hint="@string/nickname"
-            android:visibility="visible" />
+            android:visibility="visible"
+            android:layout_weight="1" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -33,50 +41,71 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/birthday"
         android:id="@+id/textView2"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_weight="1" />
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner" />
+        android:id="@+id/spinner"
+        android:layout_weight="1" />
 
+        <Button
+            android:id="@+id/birthday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/birthday"
+            android:visibility="gone"/>
 
-    <Spinner
-        android:layout_width="100dp"
-        android:layout_height="25dp"
-        android:id="@+id/spinner2" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
 
-    <Spinner
-        android:layout_width="110dp"
-        android:layout_height="25dp"
-        android:id="@+id/spinner3"
-        style="@style/TextAppearance.AppCompat.Body1" />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner2"
+            android:layout_weight="1" />
 
-    <Spinner
-        android:layout_width="110dp"
-        android:layout_height="25dp"
-        android:id="@+id/spinner4" />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner3"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_weight="1" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner4"
+            android:layout_weight="1" />
+    </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/relationship_status"
         android:id="@+id/textView3"
         android:textStyle="bold"
-        android:textSize="20sp"
-        android:layout_marginTop="22dp" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_weight="1" />
 
     <Spinner
-        android:layout_width="200dp"
-        android:layout_height="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/spinner5"
-        android:layout_marginTop="20dp" />
+        android:layout_weight="1" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save"
-        android:id="@+id/button"
-        android:layout_gravity="center_horizontal"/>
+        android:id="@+id/saveButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:nestedScrollingEnabled="false" />
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

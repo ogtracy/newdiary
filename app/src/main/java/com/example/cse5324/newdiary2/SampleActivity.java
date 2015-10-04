@@ -24,7 +24,7 @@ public class SampleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ratebar = (RatingBar) findViewById(R.id.ratingBar);
         value = (TextView) findViewById(R.id.textView3);
-        Submit = (Button) findViewById(R.id.button);
+        Submit = (Button) findViewById(R.id.saveButton);
         ratebar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating,
                                         boolean fromUser) {

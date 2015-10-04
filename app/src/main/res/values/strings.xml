@@ -54,7 +54,7 @@
     <string name="erase">Erase</string>
     <string name="paint">Paint</string>
     <string name="personal">PERSONAL</string>
-    <string name="nickname">Nick Name</string>
-    <string name="birthday">BirthDay</string>
+    <string name="nickname">NICKNAME</string>
+    <string name="birthday">BIRTHDAY</string>
     <string name="relationship_status">Relationship Status</string>
 </resources>
