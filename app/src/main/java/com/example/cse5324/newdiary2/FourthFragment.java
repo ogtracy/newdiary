@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 /**
  * Created by arun prasad on 28-09-2015.
  */
+//java file for thoughts
 public class FourthFragment extends Fragment {
 
     public static FourthFragment newInstance() {
@@ -23,7 +24,7 @@ public class FourthFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_four, container, false);
-        return rootView;
+        return rootView;//calling thoughts page
     }
 
     @Override

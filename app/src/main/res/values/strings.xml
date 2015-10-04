@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NewDiary2</string>
+    <string name="app_name">E-motions</string>
 
     <string name="action_settings">Settings</string>
 
@@ -57,4 +57,5 @@
     <string name="nickname">NICKNAME</string>
     <string name="birthday">BIRTHDAY</string>
     <string name="relationship_status">Relationship Status</string>
+    <string name="title_activity_note">NoteActivity</string>
 </resources>

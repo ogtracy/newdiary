@@ -22,6 +22,7 @@ import java.util.Calendar;
 /**
  * Created by arun prasad on 28-09-2015.
  */
+/*This class is used for implementing Personal app part*/
 public class FirstFragment extends Fragment implements DatePickerFragment.OnDateSelectionListener {
 
     Button birthdayButton;
@@ -101,28 +102,28 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
     }
 
     private void setupSpinners(){
-        birthDay = (Spinner) rootView.findViewById(R.id.spinner2);
+        birthDay = (Spinner) rootView.findViewById(R.id.spinner2);//adding day values
         String[] values1 =
                 {"Day", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
         ArrayAdapter<String> LTRadapter1 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, values1);
         LTRadapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         birthDay.setAdapter(LTRadapter1);
 
-        birthMonth = (Spinner) rootView.findViewById(R.id.spinner3);
+        birthMonth = (Spinner) rootView.findViewById(R.id.spinner3);//adding month field
         String[] values2 =
                 {"Month", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         ArrayAdapter<String> LTRadapter2 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, values2);
         LTRadapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         birthMonth.setAdapter(LTRadapter2);
 
-        romanticStatus = (Spinner) rootView.findViewById(R.id.spinner5);
+        romanticStatus = (Spinner) rootView.findViewById(R.id.spinner5);//adding fields for relationship
         String[] values4 =
                 {"Single", "Married", "Divorced", "In a Relationship"};
         ArrayAdapter<String> LTRadapter4 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, values4);
         LTRadapter4.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         romanticStatus.setAdapter(LTRadapter4);
 
-        birthYear = (Spinner) rootView.findViewById(R.id.spinner4);
+        birthYear = (Spinner) rootView.findViewById(R.id.spinner4);//generating year field
         String[] values3 = new String[140];
         values3[0] = "Year";
         int year1 = 2015;

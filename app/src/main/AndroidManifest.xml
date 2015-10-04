@@ -14,8 +14,8 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@drawable/icon"
+        android:label="E-motions"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <meta-data
@@ -27,7 +27,7 @@
 
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name" >
+            android:label="E-motions" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,6 +41,10 @@
         <activity android:name=".SampleActivity" >
         </activity>
         <activity android:name=".DrawActivity" >
+        </activity>
+        <activity
+            android:name=".NoteActivity"
+            android:label="@string/title_activity_note" >
         </activity>
     </application>
 
