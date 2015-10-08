@@ -42,6 +42,12 @@
         </activity>
         <activity android:name=".DrawActivity" >
         </activity>
+        <activity android:name=".CreateEventActivity" >
+        </activity>
+        <activity android:name=".CreateTripActivity" >
+        </activity>
+        <activity android:name=".CreateNoteActivity" >
+        </activity>
     </application>
 
 </manifest>

@@ -72,14 +72,24 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.beginTransaction()
                     .replace(R.id.container, MapsActivity.newInstance())
                     .commit();
+        } else if (position == 6){
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, NotesFragment.newInstance())
+                    .commit();
+        } else if (position == 7){
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, EventsFragment.newInstance())
+                    .commit();
+        } else if (position == 8){
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, TripsFragment.newInstance())
+                    .commit();
         }
 
     }
 
     public void onSectionAttached  (int number) {
-
         mTitle = getString(R.string.title);
-
     }
 
     public void restoreActionBar() {
@@ -96,7 +106,7 @@ public class MainActivity extends AppCompatActivity
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.main, menu);
+            getMenuInflater().inflate(R.menu.global, menu);
             restoreActionBar();
             return true;
         }

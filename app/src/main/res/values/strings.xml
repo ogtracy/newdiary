@@ -57,4 +57,26 @@
     <string name="nickname">NICKNAME</string>
     <string name="birthday">BIRTHDAY</string>
     <string name="relationship_status">Relationship Status</string>
+    <string name="note_hint">Dear Diary…</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="event_name">event_name</string>
+    <string name="date">date</string>
+    <string name="time">time</string>
+    <string name="location">location</string>
+    <string name="event_description">Event Description</string>
+    <string name="get_reminders">Get Reminders</string>
+    <string name="trip_name">Trip Name</string>
+    <string name="start">start</string>
+    <string name="end">end</string>
+    <string name="trip_events">trip_events</string>
+    <string name="trip_events_default">No events have been added to this trip</string>
+    <string name="add_events">Add Events</string>
+    <string name="no_trips" />
+    <string name="no_events">There are no events to display</string>
+    <string name="no_diary_entries">There are no diary entries to display</string>
+    <string name="new_diary_entry">New Diary Entry</string>
+    <string name="new_trip">New Trip</string>
+    <string name="new_event">New Event</string>
 </resources>
