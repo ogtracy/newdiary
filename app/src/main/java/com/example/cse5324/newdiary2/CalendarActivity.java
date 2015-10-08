@@ -29,20 +29,24 @@ public class CalendarActivity extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+
         final View rootView = inflater.inflate(R.layout.activity_calendar, container, false);
+
+
         this.mCalendarView = (CalendarView) rootView.findViewById(R.id.my_calendarview);
         this.mCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-
+                startActivity(new Intent(getActivity(), NoteActivity.class));
             }
         });
         this.mCalendarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(rootView.getContext(), "clicked on calender", Toast.LENGTH_LONG).show();
-                //MainActivity.super.startActivity(new Intent(MainActivity.this, Main3Activity.class));
+                Toast.makeText(getActivity(), "clicked on calender", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(getActivity(), NoteActivity.class));
             }
         });
 
