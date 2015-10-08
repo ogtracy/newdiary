@@ -17,7 +17,6 @@ import android.support.v4.app.Fragment;
 public class CalendarActivity extends Fragment {
 
     private CalendarView mCalendarView;
-    Button button;
 
     public static CalendarActivity newInstance() {
         CalendarActivity fragment = new CalendarActivity();
