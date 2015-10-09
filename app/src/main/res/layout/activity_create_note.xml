@@ -17,27 +17,28 @@
             android:layout_height="wrap_content"
             android:text="New Button"
             android:id="@+id/dateButton"
-            android:enabled="false" />
+            android:layout_gravity="right" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="New Button"
             android:id="@+id/timeButton"
-            android:enabled="false" />
+            android:layout_gravity="right" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:inputType="textNoSuggestions" />
+            android:id="@+id/title"
+            android:inputType="textNoSuggestions"
+            android:hint="@string/title_hint" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:ems="10"
-            android:id="@+id/editText23"
+            android:id="@+id/text"
             android:minLines="6"
             android:hint="@string/note_hint" />
 
@@ -46,13 +47,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/imageView"
             android:layout_gravity="center_horizontal"
-            android:contentDescription="image" />
+            android:contentDescription="@string/image"
+            android:onClick="save" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/save"
             android:id="@+id/saveButton"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:onClick="save" />
     </LinearLayout>
 </ScrollView>

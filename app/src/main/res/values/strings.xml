@@ -83,4 +83,6 @@
     <string name="new_diary_entry">New Diary Entry</string>
     <string name="new_trip">New Trip</string>
     <string name="new_event">New Event</string>
+    <string name="title_hint">Enter a Title</string>
+    <string name="image">image</string>
 </resources>
