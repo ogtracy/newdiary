@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         } else if (position == 6){
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, NotesFragment.newInstance())
+                    .replace(R.id.container, DiaryFragment.newInstance())
                     .commit();
         } else if (position == 7){
             fragmentManager.beginTransaction()

@@ -9,10 +9,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,8 +28,8 @@ public class CreateNoteActivity extends AppCompatActivity {
     private EditText text;
     private Button saveButton;
     private ImageView imageView;
-    private final String NOTESFILE ="comexamplecse5324newdiary2.notesFile";
-    private final String SEPARATOR = "this is a note separator and should not be used any other way";
+    public static final String NOTESFILE ="comexamplecse5324newdiary2.notesFile";
+    public static final String SEPARATOR = "this is a note separator and should not be used any other way";
     private Calendar cal;
 
 
@@ -93,43 +96,61 @@ public class CreateNoteActivity extends AppCompatActivity {
         try {
             File file = new File(getFilesDir().getAbsolutePath(), NOTESFILE);
             if(file.exists()) {
-                FileInputStream fis = openFileInput(NOTESFILE);
                 FileOutputStream fosTemp = openFileOutput("tempFile", Context.MODE_PRIVATE);
 
                 //write new note to temporary file
                 fosTemp.write(SEPARATOR.getBytes());
+                fosTemp.write("\n".getBytes());
                 fosTemp.write(time.getBytes());
+                fosTemp.write("\n".getBytes());
                 fosTemp.write(title.getBytes());
                 fosTemp.write("\n".getBytes());
                 fosTemp.write(text.getBytes());
+                fosTemp.write("\n".getBytes());
                 fosTemp.write(SEPARATOR.getBytes());
+                fosTemp.write("\n".getBytes());
 
                 //copy saved notes to temporary file
-                byte[] buffer = new byte[1024];
-                while (fis.read(buffer) != -1) {
-                    fosTemp.write(buffer);
+                InputStream in = openFileInput(NOTESFILE);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String line = reader.readLine();
+
+                while (line != null) {
+                    fosTemp.write(line.getBytes());
+                    fosTemp.write('\n');
+                    line = reader.readLine();
                 }
-                fis.close();
+                in.close();
                 fosTemp.close();
 
                 //save all notes in correct file
                 FileOutputStream fos = openFileOutput(NOTESFILE, Context.MODE_PRIVATE);
-                FileInputStream fis2 = openFileInput("tempFile");
-                while (fis2.read(buffer) != -1) {
-                    fos.write(buffer);
+
+                InputStream in2 = openFileInput("tempFile");
+                BufferedReader reader2 = new BufferedReader(new InputStreamReader(in2));
+                line = reader2.readLine();
+
+                while (line!=null) {
+                    fos.write(line.getBytes());
+                    fos.write('\n');
+                    line = reader2.readLine();
                 }
                 fos.close();
-                fis2.close();
+                in2.close();
                 finish();
             } else{
                 // save directly to save file
                 FileOutputStream fos = openFileOutput(NOTESFILE, Context.MODE_PRIVATE);
                 fos.write(SEPARATOR.getBytes());
+                fos.write("\n".getBytes());
                 fos.write(time.getBytes());
+                fos.write("\n".getBytes());
                 fos.write(title.getBytes());
                 fos.write("\n".getBytes());
                 fos.write(text.getBytes());
+                fos.write("\n".getBytes());
                 fos.write(SEPARATOR.getBytes());
+                fos.write("\n".getBytes());
                 fos.close();
                 finish();
             }
