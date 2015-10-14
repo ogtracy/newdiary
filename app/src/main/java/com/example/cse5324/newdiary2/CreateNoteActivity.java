@@ -131,6 +131,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     public void importImage(View v){
         Intent i = new Intent(
                 Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
         startActivityForResult(i, RESULT_LOAD_IMAGE);
     }
 
