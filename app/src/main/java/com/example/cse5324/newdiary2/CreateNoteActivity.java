@@ -1,9 +1,11 @@
 package com.example.cse5324.newdiary2;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -39,6 +41,7 @@ public class CreateNoteActivity extends AppCompatActivity {
     private EditText text;
     private Button saveButton;
     private ImageView imageView;
+    private String picturePath="";
     public static final String NOTESFILE ="comexamplecse5324newdiary2.notesFile";
     public static final String SEPARATOR = "this is a note separator and should not be used any other way";
     private final int SPEECH_INPUT = 555;
@@ -118,7 +121,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                     cursor.moveToFirst();
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String picturePath = cursor.getString(columnIndex);
+                    picturePath = cursor.getString(columnIndex);
                     cursor.close();
 
                     imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
@@ -136,17 +139,10 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private boolean validateInput(){
-
         return false;
     }
 
-    /**
-     *
-     * @param v
-     *
-     * This method saves the new note to the top of the file containing all notes
-     * TODO make this an AsyncTask so it doesn't stall the rest of the app.
-     */
+
     public void save(View v){
         String title = this.title.getText().toString();
         String text = this.text.getText().toString();
@@ -170,71 +166,21 @@ public class CreateNoteActivity extends AppCompatActivity {
             return;
         }
 
+        saveInDB(title, text, time);
+    }
 
-        try {
-            File file = new File(getFilesDir().getAbsolutePath(), NOTESFILE);
-            if(file.exists()) {
-                FileOutputStream fosTemp = openFileOutput("tempFile", Context.MODE_PRIVATE);
-
-                //write new note to temporary file
-                fosTemp.write(SEPARATOR.getBytes());
-                fosTemp.write("\n".getBytes());
-                fosTemp.write(time.getBytes());
-                fosTemp.write("\n".getBytes());
-                fosTemp.write(title.getBytes());
-                fosTemp.write("\n".getBytes());
-                fosTemp.write(text.getBytes());
-                fosTemp.write("\n".getBytes());
-                fosTemp.write(SEPARATOR.getBytes());
-                fosTemp.write("\n".getBytes());
-
-                //copy saved notes to temporary file
-                InputStream in = openFileInput(NOTESFILE);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                String line = reader.readLine();
-
-                while (line != null) {
-                    fosTemp.write(line.getBytes());
-                    fosTemp.write('\n');
-                    line = reader.readLine();
-                }
-                in.close();
-                fosTemp.close();
-
-                //save all notes in correct file
-                FileOutputStream fos = openFileOutput(NOTESFILE, Context.MODE_PRIVATE);
-
-                InputStream in2 = openFileInput("tempFile");
-                BufferedReader reader2 = new BufferedReader(new InputStreamReader(in2));
-                line = reader2.readLine();
-
-                while (line!=null) {
-                    fos.write(line.getBytes());
-                    fos.write('\n');
-                    line = reader2.readLine();
-                }
-                fos.close();
-                in2.close();
-                finish();
-            } else{
-                // save directly to save file
-                FileOutputStream fos = openFileOutput(NOTESFILE, Context.MODE_PRIVATE);
-                fos.write(SEPARATOR.getBytes());
-                fos.write("\n".getBytes());
-                fos.write(time.getBytes());
-                fos.write("\n".getBytes());
-                fos.write(title.getBytes());
-                fos.write("\n".getBytes());
-                fos.write(text.getBytes());
-                fos.write("\n".getBytes());
-                fos.write(SEPARATOR.getBytes());
-                fos.write("\n".getBytes());
-                fos.close();
-                finish();
-            }
-
-        } catch (IOException e){
-            System.out.println(e.getMessage());
-        }
+    /**
+     * TODO make this an AsyncTask so it doesn't stall the rest of the app.
+     */
+    private void saveInDB(String title, String text, String time) {
+        DBHelper dbHelper = new DBHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(NoteContract.NoteEntry.COLUMN_NAME_IMG, picturePath);
+        values.put(NoteContract.NoteEntry.COLUMN_NAME_TEXT, text);
+        values.put(NoteContract.NoteEntry.COLUMN_NAME_TIME, time);
+        values.put(NoteContract.NoteEntry.COLUMN_NAME_TITLE, title);
+        long newRowId = db.insert(NoteContract.NoteEntry.TABLE_NAME, "null", values);
+        finish();
     }
 }

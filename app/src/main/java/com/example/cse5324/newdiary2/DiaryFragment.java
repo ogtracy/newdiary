@@ -1,9 +1,10 @@
 package com.example.cse5324.newdiary2;
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -57,51 +57,47 @@ public class DiaryFragment extends Fragment implements AbsListView.OnItemClickLi
 
     private void populateList(){
         diaryListItemList = new ArrayList();
-        InputStream in;
-        BufferedReader reader;
-        String line;;
-
         int count =0;
+        DBHelper mDbHelper = new DBHelper(getActivity().getApplicationContext());
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        File file = new File(getActivity().getFilesDir().getAbsolutePath(), CreateNoteActivity.NOTESFILE);
-        if (!file.exists()){
-            diaryListItemList.add(new DiaryListItem("There are no diary entries to display"));
-            return;
-        }
-        try {
+        String[] projection = {
+                NoteContract.NoteEntry.COLUMN_NAME_IMG,
+                NoteContract.NoteEntry.COLUMN_NAME_TITLE,
+                NoteContract.NoteEntry.COLUMN_NAME_TIME,
+                NoteContract.NoteEntry.COLUMN_NAME_TEXT
+        };
+        String sortOrder = NoteContract.NoteEntry.COLUMN_NAME_TIME + " DESC";
+        Cursor c = db.query(
+                NoteContract.NoteEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                null,                                // The columns for the WHERE clause
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+        c.moveToFirst();
+            while (count < 20 && !c.isAfterLast()) {
+                String itemTitle = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TITLE));
+                String itemText = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TEXT));
+                String itemTime = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TIME));
+                String itemIMG = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_IMG));
 
-            in = getActivity().openFileInput(CreateNoteActivity.NOTESFILE);
-            reader = new BufferedReader(new InputStreamReader(in));
-            line = reader.readLine();
-            while(line != null && count < 20){
-                String displayText = "";
-                while (line.equals(CreateNoteActivity.SEPARATOR)){
-                    line = reader.readLine();
-                }
+
                 Calendar cal = Calendar.getInstance();
-                cal.setTimeInMillis(Long.parseLong(line));
+                cal.setTimeInMillis(Long.parseLong(itemTime));
                 DateFormat df = DateFormat.getDateTimeInstance();
-                displayText += df.format(cal.getTime());
-                displayText += "\n";
-                displayText += reader.readLine();
-                displayText += "\n";
-                line = reader.readLine();
-                while (line != null && line!= "\u0004" && !line.equals(CreateNoteActivity.SEPARATOR)){
-                    displayText += line;
-                    displayText += "\n";
-                    line = reader.readLine();
-                }
-                diaryListItemList.add(new DiaryListItem(displayText));
-                line = reader.readLine();
-                count++;
-            }
-            in.close();
+                String displayText = df.format(cal.getTime());
+                displayText = displayText + "\n" + itemTitle + "\n" + itemText;
 
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+                diaryListItemList.add(new DiaryListItem(displayText));
+                count++;
+                c.moveToNext();
+            }
 
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

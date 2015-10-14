@@ -15,25 +15,27 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + DatabaseContract.FeedEntry.TABLE_NAME + " (" +
-                    DatabaseContract.FeedEntry._ID + " INTEGER PRIMARY KEY," +
-                    DatabaseContract.FeedEntry.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + COMMA_SEP +
-                    DatabaseContract.FeedEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +"..."
-    // plus Any other options for the CREATE command
-           + " )";
+            "CREATE TABLE " + NoteContract.NoteEntry.TABLE_NAME + " (" +
+                    NoteContract.NoteEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
+                    NoteContract.NoteEntry.COLUMN_NAME_TEXT + TEXT_TYPE + COMMA_SEP +
+                    NoteContract.NoteEntry.COLUMN_NAME_IMG + TEXT_TYPE + COMMA_SEP +
+                    NoteContract.NoteEntry.COLUMN_NAME_TIME + TEXT_TYPE + " )";
 
     private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + DatabaseContract.FeedEntry.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + NoteContract.NoteEntry.TABLE_NAME;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_ENTRIES);
+        try {
+            db.execSQL(SQL_CREATE_ENTRIES);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // This database is only a cache for online data, so its upgrade policy is
-        // to simply to discard the data and start over
+        // the upgrade policy is to simply to discard the data and start over
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
