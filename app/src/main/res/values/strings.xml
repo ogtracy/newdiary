@@ -85,4 +85,8 @@
     <string name="new_event">New Event</string>
     <string name="title_hint">Enter a Title</string>
     <string name="image">image</string>
+    <string name="speak">speak</string>
+    <string name="speech_prompt">Say Something</string>
+    <string name="speech_not_supported">Speech to text is not supported by this device</string>
+    <string name="import_image">Import Image</string>
 </resources>

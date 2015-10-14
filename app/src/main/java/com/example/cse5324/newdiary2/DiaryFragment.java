@@ -129,7 +129,7 @@ public class DiaryFragment extends Fragment implements AbsListView.OnItemClickLi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         DiaryListItem item = (DiaryListItem)this.diaryListItemList.get(position);
-        Toast.makeText(getActivity(), item.getItemTitle() + " Clicked!", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), item.getItemTitle() + " Clicked!", Toast.LENGTH_LONG).show();
     }
 
     /**

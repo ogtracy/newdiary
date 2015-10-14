@@ -42,13 +42,29 @@
             android:minLines="6"
             android:hint="@string/note_hint" />
 
-        <ImageView
+        <ImageButton
+            android:id="@+id/btnSpeak"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/ico_mic"
+            android:layout_gravity="right"
+            android:contentDescription="@string/speak" />
+
+        <ImageView
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/imageView"
             android:layout_gravity="center_horizontal"
-            android:contentDescription="@string/image"
-            android:onClick="save" />
+            android:contentDescription="@string/image" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/import_image"
+            android:id="@+id/importImg"
+            android:layout_gravity="center_horizontal"
+            android:onClick="importImage" />
 
         <Button
             android:layout_width="wrap_content"
