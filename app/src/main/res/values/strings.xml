@@ -89,4 +89,5 @@
     <string name="speech_prompt">Say Something</string>
     <string name="speech_not_supported">Speech to text is not supported by this device</string>
     <string name="import_image">Import Image</string>
+    <string name="icon_content_description">Description</string>
 </resources>

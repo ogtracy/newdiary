@@ -3,15 +3,21 @@ package com.example.cse5324.newdiary2;
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,7 +38,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class DiaryFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class DiaryFragment extends ListFragment implements AbsListView.OnItemClickListener {
 
     private OnFragmentInteractionListener mListener;
     private AbsListView mListView;
@@ -45,18 +51,18 @@ public class DiaryFragment extends Fragment implements AbsListView.OnItemClickLi
         return fragment;
     }
 
-    public DiaryFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        populateList();
+        if (diaryListItemList == null) {
+            diaryListItemList = new ArrayList();
+            populateList();
+        }
         mAdapter = new DiaryListAdapter(getActivity(), diaryListItemList);
     }
 
     private void populateList(){
-        diaryListItemList = new ArrayList();
+
         int count =0;
         DBHelper mDbHelper = new DBHelper(getActivity().getApplicationContext());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -87,11 +93,12 @@ public class DiaryFragment extends Fragment implements AbsListView.OnItemClickLi
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(Long.parseLong(itemTime));
-                DateFormat df = DateFormat.getDateTimeInstance();
-                String displayText = df.format(cal.getTime());
-                displayText = displayText + "\n" + itemTitle + "\n" + itemText;
+                Drawable img = null;
+                if (!itemIMG.equals("")) {
+                    img = Drawable.createFromPath(itemIMG);
 
-                diaryListItemList.add(new DiaryListItem(displayText));
+                }
+                diaryListItemList.add(new DiaryListItem(img, itemTitle, itemText, cal));
                 count++;
                 c.moveToNext();
             }
@@ -125,7 +132,14 @@ public class DiaryFragment extends Fragment implements AbsListView.OnItemClickLi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         DiaryListItem item = (DiaryListItem)this.diaryListItemList.get(position);
-        //Toast.makeText(getActivity(), item.getItemTitle() + " Clicked!", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), item.getItemTitle() + " Clicked!", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // remove the dividers from the ListView of the ListFragment
+        getListView().setDivider(null);
     }
 
     /**

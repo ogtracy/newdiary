@@ -19,9 +19,6 @@ public class LoginActivity extends AppCompatActivity  {
 
     public static final String PROFILE = "diaryProfile";
     public static final String PROFILE_CREATED = "profileCreated";
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
 
     // UI references.
     private EditText p1;
@@ -47,56 +44,11 @@ public class LoginActivity extends AppCompatActivity  {
         p3 = (EditText) findViewById(R.id.password3);
         p4 = (EditText) findViewById(R.id.password4);
 
-        p1.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        p1.addTextChangedListener(new MyTextWatcher(p2));
 
-            }
+        p2.addTextChangedListener(new MyTextWatcher(p3));
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                p2.requestFocus();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        p2.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                p3.requestFocus();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        p3.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                p4.requestFocus();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        p3.addTextChangedListener(new MyTextWatcher(p4));
     }
 
 
@@ -169,5 +121,20 @@ public class LoginActivity extends AppCompatActivity  {
     public void createNewProfile(){
         Intent intent = new Intent(this, CreateProfileActivity.class);
         startActivity(intent);
+    }
+
+    private class MyTextWatcher implements TextWatcher {
+
+        private View view;
+        private MyTextWatcher(View v) {
+            view =v;
+        }
+
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+        public void afterTextChanged(Editable editable) {
+            view.requestFocus();
+        }
     }
 }

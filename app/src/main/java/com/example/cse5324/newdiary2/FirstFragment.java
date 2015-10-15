@@ -7,10 +7,13 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +37,7 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
     private Spinner romanticStatus;
     private Spinner sunSign;
     private View rootView;
+    private boolean hasChanged;
 
 
     public static FirstFragment newInstance() {
@@ -46,9 +50,8 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
     @Override
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-
         rootView = inflater.inflate(R.layout.fragment_first, container, false);
+
         nickname = (EditText)rootView.findViewById(R.id.nickname);
         birthdayButton = (Button)rootView.findViewById(R.id.birthday);
         birthdayButton.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +63,7 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
         });
 
         saveButton = (Button)rootView.findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(new View.OnClickListener(){
+        saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveProfile();
             }
@@ -69,9 +72,19 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
 
         setupSpinners();
         loadSavedValues();
-
+        addListeners();
+        hasChanged = false;
         return rootView;
 
+    }
+
+    private void addListeners(){
+        nickname.addTextChangedListener(new MyTextWatcher());
+        birthDay.setOnItemSelectedListener(new MyChangeListener());
+        birthMonth.setOnItemSelectedListener(new MyChangeListener());
+        birthYear.setOnItemSelectedListener(new MyChangeListener());
+        romanticStatus.setOnItemSelectedListener(new MyChangeListener());
+        sunSign.setOnItemSelectedListener(new MyChangeListener());
     }
 
     private void loadSavedValues(){
@@ -147,15 +160,15 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
 
     @Override
     public void onAttach(Activity activity) {
-
-
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(1);
     }
 
     @Override
     public void onPause(){
-        saveProfile();
+        if(hasChanged) {
+            saveProfile();
+        }
         super.onPause();
     }
 
@@ -172,6 +185,7 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
     }
 
     private void saveProfile(){
+        hasChanged = false;
         boolean cancel = false;
         View focusView = null;
 
@@ -208,6 +222,32 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
+        }
+    }
+
+    private class MyTextWatcher implements TextWatcher {
+
+        private View view;
+        private MyTextWatcher() {
+        }
+
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+        public void afterTextChanged(Editable editable) {
+            hasChanged = true;
+        }
+    }
+    private class MyChangeListener implements AdapterView.OnItemSelectedListener {
+        public MyChangeListener() {
+        }
+        @Override
+        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id){
+            hasChanged = true;
+        }
+        @Override
+        public void onNothingSelected(AdapterView<?> parentView){
+
         }
     }
 
