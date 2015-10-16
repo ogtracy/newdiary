@@ -32,10 +32,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/nickname"
-            android:layout_gravity="left|top"
             android:hint="@string/nickname"
-            android:visibility="visible"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:inputType="textCapWords"
+            android:maxLines="1" />
 
     <TextView
         android:layout_width="wrap_content"
