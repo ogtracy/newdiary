@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,9 +25,8 @@ import java.util.List;
  * Created by oguni on 10/9/2015.
  */
 public class DiaryListAdapter extends ArrayAdapter {
-    private boolean useList = true;
 
-    public DiaryListAdapter(Context context, List items){
+    public DiaryListAdapter(Context context, List<DiaryListItem> items){
         super(context, R.layout.diary_list_item, items);
     }
 
@@ -35,12 +35,11 @@ public class DiaryListAdapter extends ArrayAdapter {
         TextView title;
         TextView description;
         TextView date;
+        ImageButton deleteButton;
     }
 
     public View getView(final int position, View convertView, ViewGroup parent){
         ViewHolder holder = null;
-
-        View viewToUse = null;
 
         if(convertView == null) {
             // inflate the GridView item layout
@@ -53,8 +52,8 @@ public class DiaryListAdapter extends ArrayAdapter {
             holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.description = (TextView) convertView.findViewById(R.id.content);
             holder.date = (TextView)convertView.findViewById(R.id.date);
-            ImageButton deleteButton = (ImageButton)convertView.findViewById(R.id.deleteButton);
-            deleteButton.setOnClickListener(new View.OnClickListener(){
+            holder.deleteButton = (ImageButton)convertView.findViewById(R.id.deleteButton);
+            holder.deleteButton.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v) {
                     deleteNote(position);
                 }
@@ -79,7 +78,6 @@ public class DiaryListAdapter extends ArrayAdapter {
     }
 
     private void deleteNote(final int position){
-        boolean cancel = true;
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage("Deleting Note")
                 .setTitle("Confirmation Message");

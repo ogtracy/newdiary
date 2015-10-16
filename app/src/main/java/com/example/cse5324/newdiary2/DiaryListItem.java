@@ -8,15 +8,15 @@ import java.util.Calendar;
  * Created by oguni on 10/9/2015.
  */
 public class DiaryListItem {
-    private Drawable pic;
+    private String picPath;
     private String itemTitle;
     private String itemContent;
     private Calendar date;
 
-    public DiaryListItem(Drawable pic, String title, String content, Calendar date){
+    public DiaryListItem(String picPath, String title, String content, Calendar date){
         this.itemTitle = title;
         this.itemContent = content;
-        this.pic = pic;
+        this.picPath = picPath;
         this.date = date;
     }
     public DiaryListItem(String title, String content, Calendar date){
@@ -34,10 +34,19 @@ public class DiaryListItem {
     }
 
     public Drawable getPic() {
-        return pic;
+        Drawable img = null;
+        if (!picPath.equals("")) {
+            img = Drawable.createFromPath(picPath);
+
+        }
+        return img;
     }
 
     public Calendar getDate() {
         return date;
+    }
+
+    public String getPicPath() {
+        return picPath;
     }
 }

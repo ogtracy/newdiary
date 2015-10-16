@@ -1,64 +1,40 @@
 package com.example.cse5324.newdiary2;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 /**
  * A fragment representing a list of Items.
- * <p/>
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class DiaryFragment extends ListFragment implements AbsListView.OnItemClickListener {
+public class DiaryFragment extends ListFragment{
 
-    private OnFragmentInteractionListener mListener;
-    private AbsListView mListView;
-    private ListAdapter mAdapter;
-    private List diaryListItemList;
+    private List<DiaryListItem> diaryListItemList;
 
 
     public static DiaryFragment newInstance() {
-        DiaryFragment fragment = new DiaryFragment();
-        return fragment;
+        return new DiaryFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (diaryListItemList == null) {
-            diaryListItemList = new ArrayList();
-            populateList();
-        }
-        mAdapter = new DiaryListAdapter(getActivity(), diaryListItemList);
+        diaryListItemList = new ArrayList<>();
+        populateList();
+        setListAdapter(new DiaryListAdapter(getActivity(), diaryListItemList));
     }
 
     private void populateList(){
@@ -93,28 +69,12 @@ public class DiaryFragment extends ListFragment implements AbsListView.OnItemCli
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(Long.parseLong(itemTime));
-                Drawable img = null;
-                if (!itemIMG.equals("")) {
-                    img = Drawable.createFromPath(itemIMG);
-
-                }
-                diaryListItemList.add(new DiaryListItem(img, itemTitle, itemText, cal));
+                diaryListItemList.add(new DiaryListItem(itemIMG, itemTitle, itemText, cal));
                 count++;
                 c.moveToNext();
             }
+        c.close();
 
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_diaryitem, container, false);
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
-        mListView.setOnItemClickListener(this);
-
-        return view;
     }
 
     @Override
@@ -124,15 +84,14 @@ public class DiaryFragment extends ListFragment implements AbsListView.OnItemCli
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        DiaryListItem item = (DiaryListItem)this.diaryListItemList.get(position);
-        Toast.makeText(getActivity(), item.getItemTitle() + " Clicked!", Toast.LENGTH_LONG).show();
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        DiaryListItem item = this.diaryListItemList.get(position);
+        Intent intent = new Intent(getActivity(), ViewNoteActivity.class);
+        intent.putExtra("title", item.getItemTitle());
+        intent.putExtra("text", item.getItemContent());
+        intent.putExtra("time", item.getDate().getTimeInMillis());
+        intent.putExtra("picPath", item.getPicPath());
+        startActivity(intent);
     }
 
     @Override
@@ -140,19 +99,6 @@ public class DiaryFragment extends ListFragment implements AbsListView.OnItemCli
         super.onViewCreated(view, savedInstanceState);
         // remove the dividers from the ListView of the ListFragment
         getListView().setDivider(null);
-    }
-
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
-        }
     }
 
     /**
@@ -167,7 +113,7 @@ public class DiaryFragment extends ListFragment implements AbsListView.OnItemCli
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        //public void onFragmentInteraction(String id);
     }
 
 }

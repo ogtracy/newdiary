@@ -11,7 +11,8 @@
     <!-- the innner view - provides the white rectangle -->
     <RelativeLayout android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/frame" >
+        android:background="@drawable/frame"
+        android:descendantFocusability="blocksDescendants">
 
         <!-- the icon view -->
         <ImageView android:id="@+id/icon"
