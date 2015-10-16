@@ -1,8 +1,11 @@
 package com.example.cse5324.newdiary2;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +24,10 @@ import java.util.List;
  * Created by oguni on 10/9/2015.
  */
 public class DiaryListAdapter extends ArrayAdapter {
-    private Context context;
     private boolean useList = true;
 
     public DiaryListAdapter(Context context, List items){
         super(context, R.layout.diary_list_item, items);
-        this.context = context;
     }
 
     private static class ViewHolder {
@@ -77,14 +78,29 @@ public class DiaryListAdapter extends ArrayAdapter {
         return convertView;
     }
 
-    private void deleteNote(int position){
-        DiaryListItem item = (DiaryListItem)getItem(position);
-        String id = ""+item.getDate().getTimeInMillis();
-        String selection = NoteContract.NoteEntry.COLUMN_NAME_TIME + "=?";
-        String[] selectionArgs = { id };
-        DBHelper dbHelper = new DBHelper(getContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete(NoteContract.NoteEntry.TABLE_NAME, selection, selectionArgs);
+    private void deleteNote(final int position){
+        boolean cancel = true;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Deleting Note")
+                .setTitle("Confirmation Message");
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                DiaryListItem item = (DiaryListItem)getItem(position);
+                String itemId = ""+item.getDate().getTimeInMillis();
+                String selection = NoteContract.NoteEntry.COLUMN_NAME_TIME + "=?";
+                String[] selectionArgs = { itemId };
+                DBHelper dbHelper = new DBHelper(getContext());
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                db.delete(NoteContract.NoteEntry.TABLE_NAME, selection, selectionArgs);
+                Toast.makeText(getContext(), "Item Deleted", Toast.LENGTH_LONG).show();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 }

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -26,10 +27,11 @@ import java.util.Calendar;
  * Created by arun prasad on 28-09-2015.
  */
 /*This class is used for implementing Personal app part*/
-public class FirstFragment extends Fragment implements DatePickerFragment.OnDateSelectionListener {
+public class FirstFragment extends Fragment {
 
     Button birthdayButton;
     Button saveButton;
+    Button nextButton;
     private EditText nickname;
     private Spinner birthDay;
     private Spinner birthMonth;
@@ -68,6 +70,12 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
                 saveProfile();
             }
         });
+        nextButton = (Button)rootView.findViewById(R.id.nextButton);
+        nextButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                goToNext();
+            }
+        });
 
 
         setupSpinners();
@@ -76,6 +84,11 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
         hasChanged = false;
         return rootView;
 
+    }
+
+    private void goToNext() {
+        MainActivity act = (MainActivity)getActivity();
+        act.replaceFragment(SecondFragment.newInstance());
     }
 
     private void addListeners(){
@@ -176,18 +189,8 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
         System.out.println("boo");
     }
 
-    @Override
-    public void onDateSet(Calendar date) {
-        String value = (date.get(Calendar.YEAR)) + "-" + (date.get(Calendar.MONTH)+1)
-                + "-" + date.get(Calendar.DAY_OF_MONTH);
-        birthdayButton.setText(value);
-
-    }
-
     private void saveProfile(){
         hasChanged = false;
-        boolean cancel = false;
-        View focusView = null;
 
         String nickname = this.nickname.getText().toString();
         int birthday = this.birthDay.getSelectedItemPosition();
@@ -196,16 +199,6 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
         int relationshipStatus = this.romanticStatus.getSelectedItemPosition();
         int sunSign = this.sunSign.getSelectedItemPosition();
 
-        if (TextUtils.isEmpty(nickname)) {
-            this.nickname.setError(getString(R.string.error_field_required));
-            focusView = this.nickname;
-            cancel = true;
-        }
-
-
-        if(cancel){
-            focusView.requestFocus();
-        } else {
             SharedPreferences settings = getActivity().getSharedPreferences(LoginActivity.PROFILE, 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.putString("nickname", nickname);
@@ -214,7 +207,7 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
             editor.putInt("birthyear", birthYear);
             editor.putInt("relationshipStatus", relationshipStatus);
             editor.putInt("sunSign", sunSign);
-            editor.commit();
+            editor.apply();
 
             Context context = getActivity().getApplicationContext();
             CharSequence text = "Profile Saved!";
@@ -222,7 +215,6 @@ public class FirstFragment extends Fragment implements DatePickerFragment.OnDate
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-        }
     }
 
     private class MyTextWatcher implements TextWatcher {

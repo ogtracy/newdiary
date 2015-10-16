@@ -12,7 +12,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:dividerPadding="5dp">
 
 
         <TextView
@@ -98,14 +100,35 @@
         android:id="@+id/spinner5"
         android:layout_weight="1" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save"
-        android:id="@+id/saveButton"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:nestedScrollingEnabled="false" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/previous"
+                android:id="@+id/previousButton"
+                android:visibility="invisible" />
+
+            <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:id="@+id/saveButton"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+             />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/next"
+                android:id="@+id/nextButton"
+                android:layout_gravity="right"
+                android:layout_weight="1" />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

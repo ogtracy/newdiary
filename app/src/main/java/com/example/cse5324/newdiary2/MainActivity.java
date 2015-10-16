@@ -3,7 +3,9 @@ package com.example.cse5324.newdiary2;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,27 +18,15 @@ import android.view.ViewGroup;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
     private NavigationDrawerFragment mNavigationDrawerFragment;
-
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
     private CharSequence mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-
-
-        // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
@@ -44,49 +34,40 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        //calling required fragments
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         if (position == 0) {
             fragmentManager.beginTransaction()
                     .replace(R.id.container, FirstFragment.newInstance())
                     .commit();
-        } else if (position == 1) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, SecondFragment.newInstance())
-                    .commit();
-        } else if (position == 2) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, ThirdFragment.newInstance())
-                    .commit();
-        }
-        else if (position == 3) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, FourthFragment.newInstance())
-                    .commit();
-        }
-        else if (position == 4){
+        } else if (position == 1){
             fragmentManager.beginTransaction()
                     .replace(R.id.container, CalendarActivity.newInstance())
                     .commit();
-        } else if (position == 5){
+        } else if (position == 2){
             fragmentManager.beginTransaction()
                     .replace(R.id.container, MapsActivity.newInstance())
                     .commit();
-        } else if (position == 6){
+        } else if (position == 3){
             fragmentManager.beginTransaction()
                     .replace(R.id.container, DiaryFragment.newInstance())
                     .commit();
-        } else if (position == 7){
+        } else if (position == 4){
             fragmentManager.beginTransaction()
                     .replace(R.id.container, EventsFragment.newInstance())
                     .commit();
-        } else if (position == 8){
+        } else if (position == 5){
             fragmentManager.beginTransaction()
                     .replace(R.id.container, TripsFragment.newInstance())
                     .commit();
         }
 
+    }
+
+    public void replaceFragment(Fragment f){
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.container, f);
+        ft.commit();
     }
 
     public void onSectionAttached  (int number) {
