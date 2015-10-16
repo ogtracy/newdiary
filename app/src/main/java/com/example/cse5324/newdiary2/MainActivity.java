@@ -37,25 +37,29 @@ public class MainActivity extends AppCompatActivity
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         if (position == 0) {
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, FirstFragment.newInstance())
+                    .replace(R.id.container, HomeFragment.newInstance())
                     .commit();
-        } else if (position == 1){
+        } else if (position == 1) {
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, CalendarActivity.newInstance())
+                    .replace(R.id.container, FirstFragment.newInstance())
                     .commit();
         } else if (position == 2){
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, MapsActivity.newInstance())
+                    .replace(R.id.container, CalendarActivity.newInstance())
                     .commit();
         } else if (position == 3){
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, DiaryFragment.newInstance())
+                    .replace(R.id.container, MapsActivity.newInstance())
                     .commit();
         } else if (position == 4){
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, EventsFragment.newInstance())
+                    .replace(R.id.container, DiaryFragment.newInstance())
                     .commit();
         } else if (position == 5){
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, EventsFragment.newInstance())
+                    .commit();
+        } else if (position == 6){
             fragmentManager.beginTransaction()
                     .replace(R.id.container, TripsFragment.newInstance())
                     .commit();

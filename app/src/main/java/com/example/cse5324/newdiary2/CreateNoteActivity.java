@@ -35,11 +35,8 @@ import java.util.Locale;
 
 public class CreateNoteActivity extends AppCompatActivity {
 
-    private Button dateButton;
-    private Button timeButton;
     private EditText title;
     private EditText text;
-    private Button saveButton;
     private ImageView imageView;
     private String picturePath="";
     public static final String NOTESFILE ="comexamplecse5324newdiary2.notesFile";
@@ -47,7 +44,6 @@ public class CreateNoteActivity extends AppCompatActivity {
     private final int SPEECH_INPUT = 555;
     private final int RESULT_LOAD_IMAGE =745;
     private Calendar cal;
-    private ImageButton btnSpeak;
 
 
     @Override
@@ -58,13 +54,12 @@ public class CreateNoteActivity extends AppCompatActivity {
     }
 
     private void getViews(){
-        dateButton = (Button) findViewById(R.id.dateButton);
-        timeButton = (Button) findViewById(R.id.timeButton);
+        Button dateButton = (Button) findViewById(R.id.dateButton);
+        Button timeButton = (Button) findViewById(R.id.timeButton);
         title = (EditText) findViewById(R.id.title);
         text = (EditText) findViewById(R.id.text);
-        saveButton = (Button) findViewById(R.id.saveButton);
         imageView = (ImageView) findViewById(R.id.imageView);
-        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
+        ImageButton btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
         btnSpeak.setOnClickListener(new View.OnClickListener() {
 
             @Override
