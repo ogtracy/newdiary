@@ -1,17 +1,17 @@
 package com.example.cse5324.newdiary2;
 
-import android.app.FragmentManager;
 import android.content.IntentSender;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.Button;
+import android.widget.EditText;
 
 
 import com.google.android.gms.common.ConnectionResult;
@@ -26,11 +26,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.util.List;
+
 public class MapsActivity extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,LocationListener{
-
-    private static View view;
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GoogleApiClient mGoogleApiClient;
@@ -39,7 +40,8 @@ public class MapsActivity extends Fragment implements
     private LocationRequest mLocationRequest;
 
     public static MapsActivity newInstance() {
-        MapsActivity fragment = new MapsActivity();
+        MapsActivity fragment;
+        fragment = new MapsActivity();
         return fragment;
     }
 
@@ -51,7 +53,7 @@ public class MapsActivity extends Fragment implements
         if (container == null) {
             return null;
         }
-        view = (RelativeLayout) inflater.inflate(R.layout.activity_maps, container, false);
+        View view = inflater.inflate(R.layout.activity_maps, container, false);
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -67,6 +69,30 @@ public class MapsActivity extends Fragment implements
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1000); // 1 second, in milliseconds
 
+        Button zoomIn = (Button)view.findViewById(R.id.Bzoomin);
+        zoomIn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onZoom(v);
+            }
+        });
+        Button zoomOut = (Button)view.findViewById(R.id.Bzoomout);
+        zoomOut.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onZoom(v);
+            }
+        });
+        Button changeType = (Button)view.findViewById(R.id.Btype);
+        changeType.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                changeType();
+            }
+        });
+        Button search = (Button)view.findViewById(R.id.Bsearch);
+        search.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onSearch();
+            }
+        });
         return view;
     }
 
@@ -107,9 +133,7 @@ public class MapsActivity extends Fragment implements
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-
         // mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-
     }
 
     @Override
@@ -158,7 +182,6 @@ public class MapsActivity extends Fragment implements
         mMap.addMarker(options);
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
-
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng)      // Sets the center of the map to LatLng (refer to previous snippet)
                 .zoom(17)                   // Sets the zoom
@@ -170,10 +193,8 @@ public class MapsActivity extends Fragment implements
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         if (mMap != null)
             setUpMap();
-
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getChildFragmentManager()
@@ -204,5 +225,61 @@ public class MapsActivity extends Fragment implements
     @Override
     public void onLocationChanged(Location location) {
         handleNewLocation(location);
+    }
+
+    public void onSearch()
+    {
+        EditText location_tf = (EditText)getActivity().findViewById(R.id.TFaddress);
+        String location = location_tf.getText().toString();
+        List<Address> addressList = null;
+
+        if(!location.equals(""))
+        {
+            mMap.clear();
+            Geocoder geocoder = new Geocoder(getActivity());
+            try {
+                addressList = geocoder.getFromLocationName(location,20);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            int x=0;
+            if (addressList == null){
+                return;
+            }
+            while (x<addressList.size() && x<20) {
+                Address address = addressList.get(x);
+                LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(latLng).title(address.getFeatureName()));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                x++;
+            }
+
+
+        }
+
+    }
+
+    public void changeType()
+    {
+        if(mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL)
+        {
+            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        }
+        else
+        {
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+    }
+
+    public void onZoom(View view)
+    {
+        if(view.getId() == R.id.Bzoomin)
+        {
+            mMap.animateCamera(CameraUpdateFactory.zoomIn());
+        }
+        if(view.getId() == R.id.Bzoomout)
+        {
+            mMap.animateCamera(CameraUpdateFactory.zoomOut());
+        }
     }
 }
