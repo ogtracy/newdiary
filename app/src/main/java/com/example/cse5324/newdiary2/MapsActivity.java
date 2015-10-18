@@ -26,6 +26,9 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestFactory;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -238,7 +241,7 @@ public class MapsActivity extends Fragment implements
             mMap.clear();
             Geocoder geocoder = new Geocoder(getActivity());
             try {
-                addressList = geocoder.getFromLocationName(location,20);
+                addressList = geocoder.getFromLocationName(location,1);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -246,7 +249,7 @@ public class MapsActivity extends Fragment implements
             if (addressList == null){
                 return;
             }
-            while (x<addressList.size() && x<20) {
+            while (x<addressList.size()) {
                 Address address = addressList.get(x);
                 LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                 mMap.addMarker(new MarkerOptions().position(latLng).title(address.getFeatureName()));

@@ -96,4 +96,6 @@
     <string name="previous">Previous</string>
     <string name="delete">Delete</string>
     <string name="change_image">Change Image</string>
+    <string name="splash_image">splash image</string>
+    <string name="e_motions">E-Motions</string>
 </resources>
