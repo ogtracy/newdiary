@@ -15,6 +15,7 @@ import android.widget.EditText;
 
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -26,21 +27,24 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestFactory;
-
 import java.io.IOException;
 import java.util.List;
 
+
+
+
 public class MapsActivity extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,LocationListener{
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener{
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GoogleApiClient mGoogleApiClient;
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
+
+
 
     public static MapsActivity newInstance() {
         MapsActivity fragment;
@@ -53,6 +57,9 @@ public class MapsActivity extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        if (!isGooglePlayServicesAvailable()){
+            getActivity().finish();
+        }
         if (container == null) {
             return null;
         }
@@ -97,6 +104,16 @@ public class MapsActivity extends Fragment implements
             }
         });
         return view;
+    }
+
+    private boolean isGooglePlayServicesAvailable() {
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity());
+        if (ConnectionResult.SUCCESS == status) {
+            return true;
+        } else {
+            GooglePlayServicesUtil.getErrorDialog(status, getActivity(), 0).show();
+            return false;
+        }
     }
 
     @Override
@@ -225,11 +242,6 @@ public class MapsActivity extends Fragment implements
         super.onDestroyView();
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
-    }
-
     public void onSearch()
     {
         EditText location_tf = (EditText)getActivity().findViewById(R.id.TFaddress);
@@ -284,5 +296,12 @@ public class MapsActivity extends Fragment implements
         {
             mMap.animateCamera(CameraUpdateFactory.zoomOut());
         }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
     }
 }
