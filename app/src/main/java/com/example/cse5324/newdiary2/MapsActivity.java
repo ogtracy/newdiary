@@ -43,6 +43,10 @@ public class MapsActivity extends Fragment implements
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
+    double latitude = 0;
+    double longitude = 0;
+    private int PROXIMITY_RADIUS = 5000;
+    private static final String GOOGLE_API_KEY = "AIzaSyBJ-u_b252b4GzjZ4jfBy5WbZYB9b586vg";
 
 
 
@@ -250,7 +254,6 @@ public class MapsActivity extends Fragment implements
 
         if(!location.equals(""))
         {
-            mMap.clear();
             Geocoder geocoder = new Geocoder(getActivity());
             try {
                 addressList = geocoder.getFromLocationName(location,1);
@@ -261,6 +264,7 @@ public class MapsActivity extends Fragment implements
             if (addressList == null){
                 return;
             }
+
             while (x<addressList.size()) {
                 Address address = addressList.get(x);
                 LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
@@ -300,8 +304,15 @@ public class MapsActivity extends Fragment implements
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        LatLng latLng = new LatLng(latitude, longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
+
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title("Current Location");
+        mMap.addMarker(options);
     }
 }
