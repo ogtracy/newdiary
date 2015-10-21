@@ -20,8 +20,9 @@
         android:icon="@drawable/icon"
         android:label="E-motions"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <uses-library android:name="com.google.android.maps"/>
+        android:theme="@style/AppTheme" >
+        <uses-library android:name="com.google.android.maps" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -38,10 +39,6 @@
         <activity android:name=".SampleActivity" >
         </activity>
         <activity android:name=".DrawActivity" >
-        </activity>
-        <activity
-            android:name=".NoteActivity"
-            android:label="@string/title_activity_note" >
         </activity>
         <activity android:name=".CreateEventActivity" >
         </activity>
@@ -61,6 +58,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".ViewDateActivity" >
         </activity>
     </application>
 

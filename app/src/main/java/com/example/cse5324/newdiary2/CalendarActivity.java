@@ -37,7 +37,7 @@ public class CalendarActivity extends Fragment {
         this.mCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                startActivity(new Intent(getActivity(), NoteActivity.class));
+                startActivity(new Intent(getActivity(), ViewDateActivity.class));
             }
         });
         this.mCalendarView.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +45,7 @@ public class CalendarActivity extends Fragment {
             public void onClick(View v) {
 
                 Toast.makeText(getActivity(), "clicked on calender", Toast.LENGTH_LONG).show();
-                startActivity(new Intent(getActivity(), NoteActivity.class));
+                startActivity(new Intent(getActivity(), ViewDateActivity.class));
             }
         });
 

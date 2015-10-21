@@ -160,7 +160,8 @@ public class CreateEventActivity extends AppCompatActivity
             focusView.requestFocus();
             return;
         }
-        String eventID = "" + addEventToCalendar(eventName, description, location);
+        boolean allowReminders = this.allowReminders.isChecked();
+        String eventID = "" + addEventToCalendar(eventName, description, location, allowReminders);
         save(eventName, location, description, eventID);
 
     }
@@ -267,7 +268,7 @@ public class CreateEventActivity extends AppCompatActivity
         }
         return null;
     }
-    private long addEventToCalendar(String eventName, String eventDescription, String eventLocation){
+    private long addEventToCalendar(String eventName, String eventDescription, String eventLocation, boolean allowReminders){
         String calId = getCalendarId();
         if (calId == null) {
             // no calendar account; react meaningfully
@@ -282,6 +283,7 @@ public class CreateEventActivity extends AppCompatActivity
         values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getDisplayName(Locale.getDefault()));
         values.put(CalendarContract.Events.EVENT_LOCATION, eventLocation);
+        //TODO add reminders
         Uri uri = getApplicationContext().getContentResolver().insert(CalendarContract.Events.CONTENT_URI, values);
         long eventId = Long.valueOf(uri.getLastPathSegment());
         return eventId;
