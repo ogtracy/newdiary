@@ -18,29 +18,86 @@
             android:id="@+id/eventName"
             android:hint="@string/event_name" />
 
-        <EditText
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="date"
-            android:ems="10"
-            android:id="@+id/date"
-            android:hint="@string/date" />
+            android:layout_height="match_parent">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="time"
-            android:ems="10"
-            android:id="@+id/time"
-            android:hint="@string/time" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/start"
+                android:id="@+id/textView25"
+                android:layout_weight="1"
+                android:textStyle="bold" />
 
-        <EditText
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date"
+                android:id="@+id/startDate"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time"
+                android:id="@+id/startTime"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPostalAddress"
-            android:ems="10"
-            android:id="@+id/location"
-            android:hint="@string/location" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/end"
+                android:id="@+id/textView26"
+                android:layout_weight="1"
+                android:textStyle="bold" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date"
+                android:id="@+id/endDate"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time"
+                android:id="@+id/endTime"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPostalAddress|textMultiLine"
+                android:ems="10"
+                android:id="@+id/location"
+                android:hint="@string/location"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickLocation"
+                android:src="@drawable/place"
+                android:layout_weight="1" />
+
+        </LinearLayout>
 
         <EditText
             android:layout_width="match_parent"

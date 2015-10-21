@@ -2,7 +2,6 @@ package com.example.cse5324.newdiary2;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,14 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,8 +30,6 @@ public class CreateNoteActivity extends AppCompatActivity {
     private EditText text;
     private ImageView imageView;
     private String picturePath="";
-    public static final String NOTESFILE ="comexamplecse5324newdiary2.notesFile";
-    public static final String SEPARATOR = "this is a note separator and should not be used any other way";
     private final int SPEECH_INPUT = 555;
     private final int RESULT_LOAD_IMAGE =745;
     private Calendar cal;

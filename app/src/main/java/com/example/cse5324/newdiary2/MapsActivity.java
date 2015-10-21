@@ -45,10 +45,6 @@ public class MapsActivity extends Fragment implements
     private LocationRequest mLocationRequest;
     double latitude = 0;
     double longitude = 0;
-    private int PROXIMITY_RADIUS = 5000;
-    private static final String GOOGLE_API_KEY = "AIzaSyBJ-u_b252b4GzjZ4jfBy5WbZYB9b586vg";
-
-
 
     public static MapsActivity newInstance() {
         MapsActivity fragment;
@@ -275,7 +271,6 @@ public class MapsActivity extends Fragment implements
 
 
         }
-
     }
 
     public void changeType()

@@ -1,65 +1,301 @@
 package com.example.cse5324.newdiary2;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.provider.CalendarContract;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class CreateEventActivity extends AppCompatActivity {
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
+
+public class CreateEventActivity extends AppCompatActivity
+        implements TimePickerFragment.OnTimeSelectionListener, DatePickerFragment.OnDateSelectionListener{
 
     private EditText eventName;
-    private EditText date,time,location,description;
-    private Button clicksave;
+    private EditText location,description;
+    private Button startDate, startTime, endDate, endTime;
+    ImageButton pickLocation;
+    private Calendar start;
+    private boolean startDateSet;
+    private boolean startTimeSet;
+    private Calendar end;
+    private boolean endDateSet;
+    private boolean endTimeSet;
+    private static final int PLACE_PICKER_REQUEST = 457;
+    private CheckBox allowReminders;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
         getViews();
+        end = Calendar.getInstance();
+        endTimeSet = false;
+        endDateSet = false;
+        start = Calendar.getInstance();
+        startTimeSet = false;
+        startDateSet = false;
     }
 
     private void getViews()
     {
-        clicksave= (Button)findViewById(R.id.button);
+        startDate= (Button)findViewById(R.id.startDate);
+        startDate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(R.id.startDate);
+            }
+        });
+        startTime= (Button)findViewById(R.id.startTime);
+        startTime.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog(R.id.startTime);
+            }
+        });
+        endDate = (Button)findViewById(R.id.endDate);
+        endDate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(R.id.endDate);
+            }
+        });
+        endTime = (Button)findViewById(R.id.endTime);
+        endTime.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog(R.id.endTime);
+            }
+        });
+        pickLocation = (ImageButton)findViewById(R.id.pickLocation);
+        pickLocation.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                pickLocation();
+            }
+        });
         eventName= (EditText)findViewById(R.id.eventName);
-        date = (EditText)findViewById(R.id.date);
-        time=(EditText)findViewById(R.id.time);
         location=(EditText)findViewById(R.id.location);
         description=(EditText)findViewById(R.id.description);
+        allowReminders = (CheckBox)findViewById(R.id.reminders);
     }
 
     public void saveEvent(View v)
     {
         String eventName=this.eventName.getText().toString();
-        String date=this.date.getText().toString();
-        String time=this.time.getText().toString();
         String location=this.location.getText().toString();
         String description = this.description.getText().toString();
 
-        saveinDBEvent(eventName,date,time,location,description);
+        saveinDBEvent(eventName, location, description);
+    }
+
+    private void saveinDBEvent(String eventName, String location, String description)
+    {
+        boolean cancel = false;
+        View focusView = null;
+        if (TextUtils.isEmpty(eventName)){
+            focusView = this.eventName;
+            this.eventName.setError(getString(R.string.error_field_required));
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(location)){
+            focusView = this.location;
+            this.location.setError(getString(R.string.error_field_required));
+            cancel = true;
+        }
+        if (!startTimeSet){
+            this.startTime.setError(getString(R.string.error_field_required));
+            focusView = this.startTime;
+            cancel = true;
+        }
+        if (!endTimeSet){
+            this.endTime.setError(getString(R.string.error_field_required));
+            focusView = this.endTime;
+            cancel = true;
+        }
+        if (!startDateSet){
+            this.startDate.setError(getString(R.string.error_field_required));
+            focusView = this.startDate;
+            cancel = true;
+        }
+        if (!endDateSet){
+            this.endDate.setError(getString(R.string.error_field_required));
+            focusView = this.endDate;
+            cancel = true;
+        }
+        if (start.getTimeInMillis() > end.getTimeInMillis()){
+            this.endDate.setError("End time before start time");
+            focusView = this.endDate;
+            cancel = true;
+            Toast toast= Toast.makeText(getApplicationContext(), "End time is before start time", Toast.LENGTH_LONG);
+            toast.show();
+        }
+        if (cancel){
+            focusView.requestFocus();
+            return;
+        }
+        String eventID = "" + addEventToCalendar(eventName, description, location);
+        save(eventName, location, description, eventID);
+
+    }
+
+    private void save(String eventName, String location, String description, String eventID){
+        DBHelper dbHelper = new DBHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(EventContract.EventEntry.COLUMN_NAME_EVENT, eventName);
+        values.put(EventContract.EventEntry.COLUMN_NAME_START, ""+start.getTimeInMillis());
+        values.put(EventContract.EventEntry.COLUMN_NAME_END, ""+end.getTimeInMillis());
+        values.put(EventContract.EventEntry.COLUMN_NAME_LOCATION, location);
+        values.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, description);
+        values.put(EventContract.EventEntry.COLUMN_NAME_EVENT_ID, eventID);
+        long rowid=db.insert(EventContract.EventEntry.TABLE_NAME, "null", values);
+
+        //show confirmation
         Context context=getApplicationContext();
         int duration=Toast.LENGTH_LONG;
         Toast toast= Toast.makeText(context, "SAVED Successfully...", duration);
         toast.show();
-
+        finish();
     }
 
-    private void saveinDBEvent(String eventName, String date, String time, String location, String description)
-    {
-        DBHelper dbHelper = new DBHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+    private void showTimePickerDialog(int buttonID) {
+        DialogFragment newFragment = new TimePickerFragment();
+        Bundle args = new Bundle();
+        args.putInt("button_id", buttonID);
+        newFragment.setArguments(args);
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    private void showDatePickerDialog(int buttonID) {
+        DialogFragment newFragment = new DatePickerFragment();
+        Bundle args = new Bundle();
+        args.putInt("button_id", buttonID);
+        newFragment.setArguments(args);
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    @Override
+    public void onTimeSet(int hour, int minute, int buttonID) {
+        String minuteString = ""+ minute;
+        String hourString =""+hour;
+        if (minuteString.length() < 2){
+            minuteString = "0"+minute;
+        }
+        if (hourString.length() < 2){
+            hourString = "0"+hour;
+        }
+        String value = hourString + ":" + minuteString;
+        Button b = (Button)findViewById(buttonID);
+        b.setText(value);
+        if (buttonID == R.id.startTime){
+            start.set(Calendar.HOUR_OF_DAY, hour);
+            start.set(Calendar.MINUTE, minute);
+            startTimeSet = true;
+        } else if (buttonID == R.id.endTime){
+            end.set(Calendar.HOUR_OF_DAY, hour);
+            end.set(Calendar.MINUTE, minute);
+            endTimeSet = true;
+        }
+    }
+
+    @Override
+    public void onDateSet(Calendar date, int buttonID) {
+        String value = (date.get(Calendar.YEAR)) + "-" + (date.get(Calendar.MONTH)+1)
+                + "-" + date.get(Calendar.DAY_OF_MONTH);
+        Button b = (Button)findViewById(buttonID);
+        b.setText(value);
+
+        if (buttonID == R.id.startDate){
+            start.set(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH));
+            startDateSet = true;
+        } else if (buttonID == R.id.endDate){
+            end.set(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH));
+            endDateSet = true;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(data, this);
+                String text = String.valueOf(place.getName());
+                text = text + ": " + String.valueOf(place.getAddress());
+                location.setText(text);
+            }
+        }
+    }
+
+    private String getCalendarId() {
+        String projection[] = {"_id", "calendar_displayName"};
+        Uri calendars;
+        calendars = Uri.parse("content://com.android.calendar/calendars");
+
+        ContentResolver contentResolver = getApplicationContext().getContentResolver();
+        Cursor managedCursor = contentResolver.query(calendars, projection, null, null, null);
+
+        if (managedCursor.moveToFirst()){
+            int idCol = managedCursor.getColumnIndex(projection[0]);
+            return managedCursor.getString(idCol);
+        }
+        return null;
+    }
+    private long addEventToCalendar(String eventName, String eventDescription, String eventLocation){
+        String calId = getCalendarId();
+        if (calId == null) {
+            // no calendar account; react meaningfully
+            return -1;
+        }
         ContentValues values = new ContentValues();
-        values.put(EventContract.EventEntry.COLUMN_NAME_EVENT,eventName);
-        values.put(EventContract.EventEntry.COLUMN_NAME_DATE,date);
-        values.put(EventContract.EventEntry.COLUMN_NAME_TIME,time);
-        values.put(EventContract.EventEntry.COLUMN_NAME_LOCATION,location);
-        values.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, description);
-        long rowid=db.insert(EventContract.EventEntry.TABLE_NAME,"null",values);
-        finish();
+        values.put(CalendarContract.Events.DTSTART, start.getTimeInMillis());
+        values.put(CalendarContract.Events.DTEND, end.getTimeInMillis());
+        values.put(CalendarContract.Events.TITLE, eventName);
+        values.put(CalendarContract.Events.CALENDAR_ID, calId);
+        values.put(CalendarContract.Events.DESCRIPTION, eventDescription);
+        values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getDisplayName(Locale.getDefault()));
+        values.put(CalendarContract.Events.EVENT_LOCATION, eventLocation);
+        Uri uri = getApplicationContext().getContentResolver().insert(CalendarContract.Events.CONTENT_URI, values);
+        long eventId = Long.valueOf(uri.getLastPathSegment());
+        return eventId;
+    }
+
+    private void pickLocation(){
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        Context context = getApplicationContext();
+        try {
+            startActivityForResult(builder.build(context), PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 }
