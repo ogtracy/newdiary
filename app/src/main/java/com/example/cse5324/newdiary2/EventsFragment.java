@@ -119,7 +119,7 @@ public class EventsFragment extends ListFragment implements EventListAdapter.Eve
     @Override
     public void remove(int position) {
         EventListItem item = (EventListItem) adapter.getItem(position);
-        String itemId = "" + item.getEventID();
+        String itemId = "" + item.getID();
         String selection = EventContract.EventEntry.COLUMN_NAME_EVENT_ID + "=?";
         String[] selectionArgs = {itemId};
         DBHelper dbHelper = new DBHelper(getActivity().getApplicationContext());
@@ -127,7 +127,7 @@ public class EventsFragment extends ListFragment implements EventListAdapter.Eve
         db.delete(EventContract.EventEntry.TABLE_NAME, selection, selectionArgs);
         adapter.remove(adapter.getItem(position));
         ContentResolver cr = getActivity().getApplicationContext().getContentResolver();
-        Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, item.getEventID());
+        Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, item.getID());
         cr.delete(deleteUri, null, null);
         Toast.makeText(getActivity().getApplicationContext(), "Item Deleted", Toast.LENGTH_LONG).show();
     }

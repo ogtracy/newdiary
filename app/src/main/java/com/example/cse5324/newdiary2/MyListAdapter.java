@@ -19,22 +19,22 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by oguni on 10/9/2015.
+ * Created by oguni on 10/25/2015.
  */
-public class DiaryListAdapter extends ArrayAdapter {
-    DiaryListener diaryListener;
+public class MyListAdapter extends ArrayAdapter {
     public static final int NONSELECTABLE = 037;
     public static final int SELECTABLE_NONDELETABLE = 805;
+    List<MyListItem> list;
     boolean[] checkedItems;
-    List<DiaryListItem> list;
+    MyListAdapterListener listener;
 
-    public DiaryListAdapter(Context context, List<DiaryListItem> items){
+    public MyListAdapter(Context context, List<MyListItem> items){
         super(context, R.layout.diary_list_item, items);
         list = items;
         checkedItems = new boolean[SearchDialog.MAX_SEARCH_RESULTS];
     }
 
-    public interface DiaryListener{
+    public interface MyListAdapterListener{
         void remove(int index);
         int getType();
         void check(int position, boolean isChecked);
@@ -75,7 +75,7 @@ public class DiaryListAdapter extends ArrayAdapter {
         }
 
         holder.box.setTag(R.id.checkBox, position);
-        if (diaryListener.getType() == NONSELECTABLE) {
+        if (listener.getType() == NONSELECTABLE) {
             holder.box.setVisibility(View.INVISIBLE);
 
         } else {
@@ -84,7 +84,7 @@ public class DiaryListAdapter extends ArrayAdapter {
                 @Override
                 public void onCheckedChanged(CompoundButton button, boolean isChecked) {
                     int pos = (Integer) button.getTag(R.id.checkBox);
-                    DiaryListItem item = list.get(pos);
+                    MyListItem item = list.get(pos);
 
                     if (isChecked) {
                         //cartItems.add(item);
@@ -94,7 +94,7 @@ public class DiaryListAdapter extends ArrayAdapter {
                         //cartItems.remove(item);
                         checkedItems[position] = false;
                     }
-                    diaryListener.check(pos, isChecked);
+                    listener.check(pos, isChecked);
                 }
             });
         }
@@ -116,7 +116,7 @@ public class DiaryListAdapter extends ArrayAdapter {
                 .setTitle("Confirmation Message");
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                diaryListener.remove(position);
+                listener.remove(position);
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -127,8 +127,7 @@ public class DiaryListAdapter extends ArrayAdapter {
         dialog.show();
     }
 
-    public void setListener(DiaryListener listener){
-        this.diaryListener = listener;
+    public void setListener(MyListAdapterListener listener){
+        this.listener = listener;
     }
-
 }

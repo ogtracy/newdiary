@@ -92,8 +92,8 @@ public class DiaryFragment extends ListFragment implements DiaryListAdapter.Diar
     public void onListItemClick(ListView l, View v, int position, long id) {
         DiaryListItem item = diaryListItemList.get(position);
         Intent intent = new Intent(getActivity(), ViewNoteActivity.class);
-        intent.putExtra("title", item.getItemTitle());
-        intent.putExtra("text", item.getItemContent());
+        intent.putExtra("title", item.getName());
+        intent.putExtra("text", item.getDescription());
         intent.putExtra("time", item.getDate().getTimeInMillis());
         intent.putExtra("picPath", item.getPicPath());
         startActivity(intent);

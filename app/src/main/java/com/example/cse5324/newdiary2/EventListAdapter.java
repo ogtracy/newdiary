@@ -67,8 +67,8 @@ public class EventListAdapter extends ArrayAdapter {
         // update the item view
         EventListItem item = (EventListItem)getItem(position);
         holder.icon.setImageDrawable(item.getPic());
-        holder.title.setText(item.getEventName());
-        holder.description.setText(item.getEventDescription());
+        holder.title.setText(item.getName());
+        holder.description.setText(item.getDescription());
         Calendar start = item.getStartDate();
         Calendar end = item.getEndDate();
 
