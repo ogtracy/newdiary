@@ -122,11 +122,6 @@ public class CreateNoteActivity extends AppCompatActivity {
         startActivityForResult(i, RESULT_LOAD_IMAGE);
     }
 
-    private boolean validateInput(){
-        return false;
-    }
-
-
     public void save(View v){
         String title = this.title.getText().toString();
         String text = this.text.getText().toString();

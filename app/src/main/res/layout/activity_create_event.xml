@@ -22,7 +22,7 @@
             <ImageView
                 android:layout_width="350dp"
                 android:layout_height="250dp"
-                android:id="@+id/imageView2"
+                android:id="@+id/image"
                 android:layout_weight="1"
                 android:onClick="importImage"
                 android:src="@drawable/no_image"

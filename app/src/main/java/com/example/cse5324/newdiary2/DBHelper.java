@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "FeedReader.db";
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
@@ -28,6 +28,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     EventContract.EventEntry.COLUMN_NAME_EVENT + TEXT_TYPE + COMMA_SEP +
                     EventContract.EventEntry.COLUMN_NAME_LOCATION + TEXT_TYPE + COMMA_SEP +
                     EventContract.EventEntry.COLUMN_NAME_EVENT_ID + TEXT_TYPE + COMMA_SEP +
+                    EventContract.EventEntry.COLUMN_NAME_NOTE_IDS + TEXT_TYPE + COMMA_SEP +
+                    EventContract.EventEntry.COLUMN_NAME_IMG + TEXT_TYPE + COMMA_SEP +
                     EventContract.EventEntry.COLUMN_NAME_END + TEXT_TYPE + " )";
 
     private static final String SQL_CREATE_TRIP_TABLE =

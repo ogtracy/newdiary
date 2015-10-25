@@ -1,6 +1,8 @@
 package com.example.cse5324.newdiary2;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +20,10 @@ import java.util.List;
  * Created by oguni on 10/21/2015.
  */
 public class EventListAdapter extends ArrayAdapter {
-    private EventDeleteListener eventListener;
+    private EventListListener eventListener;
 
-    public interface EventDeleteListener{
-        void delete(int index);
+    public interface EventListListener{
+        void remove(int index);
     }
     public EventListAdapter(Context context, List<EventListItem> items){
         super(context, R.layout.diary_list_item, items);
@@ -64,7 +66,7 @@ public class EventListAdapter extends ArrayAdapter {
 
         // update the item view
         EventListItem item = (EventListItem)getItem(position);
-        //holder.icon.setImageDrawable(item.getPic());
+        holder.icon.setImageDrawable(item.getPic());
         holder.title.setText(item.getEventName());
         holder.description.setText(item.getEventDescription());
         Calendar start = item.getStartDate();
@@ -78,11 +80,24 @@ public class EventListAdapter extends ArrayAdapter {
         return convertView;
     }
 
-    private void deleteEvent(int position){
-
+    private void deleteEvent(final int position){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Deleting Note")
+                .setTitle("Confirmation Message");
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                eventListener.remove(position);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
-    public void setListener(EventDeleteListener listener){
+    public void setListener(EventListListener listener){
         this.eventListener = listener;
     }
 }

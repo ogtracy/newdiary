@@ -109,7 +109,7 @@ public class DiaryFragment extends ListFragment implements DiaryListAdapter.Diar
     @Override
     public void remove(int position) {
         DiaryListItem item = (DiaryListItem) adapter.getItem(position);
-        String itemId = "" + item.getDate().getTimeInMillis();
+        String itemId = "" + item.getID();
         String selection = NoteContract.NoteEntry.COLUMN_NAME_TIME + "=?";
         String[] selectionArgs = {itemId};
         DBHelper dbHelper = new DBHelper(getActivity().getApplicationContext());

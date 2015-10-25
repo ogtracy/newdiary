@@ -5,10 +5,7 @@ import android.provider.BaseColumns;
  * Created by Shree on 10/16/2015.
  */
 public final class EventContract {
-    public EventContract()
-    {
-
-    }
+    public EventContract() {}
 
     public static abstract class EventEntry implements BaseColumns
     {
@@ -19,6 +16,8 @@ public final class EventContract {
         public static final String COLUMN_NAME_LOCATION = "location";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_EVENT_ID = "eventid";
+        public static final String COLUMN_NAME_NOTE_IDS ="noteids";
+        public static final String COLUMN_NAME_IMG = "image";
     }
 }
 

@@ -1,14 +1,15 @@
 package com.example.cse5324.newdiary2;
 
-import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,11 +36,10 @@ public class CreateEventActivity extends AppCompatActivity
         implements TimePickerFragment.OnTimeSelectionListener, DatePickerFragment.OnDateSelectionListener,
         SearchDialog.AddNoteListener, DiaryListAdapter.DiaryListener{
 
-    private static final int ADDNOTE = 277;
+    private static final int RESULT_LOAD_IMAGE = 1997;
     private EditText eventName;
     private EditText location,description;
     private Button startDate, startTime, endDate, endTime;
-    ImageButton pickLocation;
     private Calendar start;
     private boolean startDateSet;
     private boolean startTimeSet;
@@ -47,7 +48,9 @@ public class CreateEventActivity extends AppCompatActivity
     private boolean endTimeSet;
     private static final int PLACE_PICKER_REQUEST = 457;
     private CheckBox allowReminders;
-    DiaryListAdapter adapter;
+    private DiaryListAdapter adapter;
+    private ImageView image;
+    private String picturePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +63,12 @@ public class CreateEventActivity extends AppCompatActivity
         start = Calendar.getInstance();
         startTimeSet = false;
         startDateSet = false;
+        picturePath ="";
     }
 
     private void getViews()
     {
+        image = (ImageView)findViewById(R.id.image);
         startDate= (Button)findViewById(R.id.startDate);
         startDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +99,7 @@ public class CreateEventActivity extends AppCompatActivity
                 showTimePickerDialog(R.id.endTime);
             }
         });
-        pickLocation = (ImageButton)findViewById(R.id.pickLocation);
+        ImageButton pickLocation = (ImageButton)findViewById(R.id.pickLocation);
         pickLocation.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -204,6 +209,13 @@ public class CreateEventActivity extends AppCompatActivity
         values.put(EventContract.EventEntry.COLUMN_NAME_LOCATION, location);
         values.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, description);
         values.put(EventContract.EventEntry.COLUMN_NAME_EVENT_ID, eventID);
+        values.put(EventContract.EventEntry.COLUMN_NAME_IMG, picturePath);
+        String noteIDs = "";
+        for (int x=0; x<adapter.getCount(); x++){
+            DiaryListItem item = (DiaryListItem)adapter.getItem(x);
+            noteIDs += item.getID() +" ";
+        }
+        values.put(EventContract.EventEntry.COLUMN_NAME_NOTE_IDS, noteIDs);
         long rowid=db.insert(EventContract.EventEntry.TABLE_NAME, "null", values);
 
         //show confirmation
@@ -272,13 +284,35 @@ public class CreateEventActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PLACE_PICKER_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(data, this);
-                String text = String.valueOf(place.getName());
-                text = text + ": " + String.valueOf(place.getAddress());
-                location.setText(text);
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case PLACE_PICKER_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    Place place = PlacePicker.getPlace(data, this);
+                    String text = String.valueOf(place.getName());
+                    text = text + ": " + String.valueOf(place.getAddress());
+                    location.setText(text);
+                }
+                break;
+            case RESULT_LOAD_IMAGE: {
+                if (resultCode == RESULT_OK && null!=data){
+                    Uri selectedImage = data.getData();
+                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+                    Cursor cursor = getContentResolver().query(selectedImage,
+                            filePathColumn, null, null, null);
+                    if (cursor != null) {
+                        cursor.moveToFirst();
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        picturePath = cursor.getString(columnIndex);
+                        cursor.close();
+                        image.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                    }
+                }
+                break;
             }
+
         }
     }
 
@@ -332,14 +366,13 @@ public class CreateEventActivity extends AppCompatActivity
         }
     }
     public void importImage(View v){
-        Toast toast= Toast.makeText(getApplicationContext(), "This should import an image", Toast.LENGTH_LONG);
-        toast.show();
+        Intent i = new Intent(
+                Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+        startActivityForResult(i, RESULT_LOAD_IMAGE);
     }
     public void addNote(View v){
-        //Intent intent = new Intent(this, SearchDiaryActivity.class);
-        //startActivityForResult(intent, ADDNOTE);
         DialogFragment newFragment = new SearchDialog();
-
         newFragment.show(getSupportFragmentManager(), "searchDiary");
     }
 
@@ -350,7 +383,6 @@ public class CreateEventActivity extends AppCompatActivity
 
     @Override
     public void remove(int position) {
-        DiaryListItem item = (DiaryListItem) adapter.getItem(position);
         adapter.remove(adapter.getItem(position));
     }
 
