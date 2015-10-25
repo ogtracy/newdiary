@@ -98,4 +98,14 @@
     <string name="change_image">Change Image</string>
     <string name="splash_image">splash image</string>
     <string name="e_motions">E-Motions</string>
+    <string name="add_note">Add Note</string>
+    <string name="search">Search</string>
+    <string name="search_prompt">Enter a search value</string>
+    <string-array name="toppings">
+        <item>Big Buck Bunny</item>
+        <item>Elephants Dream</item>
+        <item>Sintel</item>
+        <item>Tears of Steel</item>
+    </string-array>
+    <string name="pick_toppings">Pick Toppings</string>
 </resources>

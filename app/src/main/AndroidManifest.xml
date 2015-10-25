@@ -61,6 +61,8 @@
         </activity>
         <activity android:name=".ViewDateActivity" >
         </activity>
+        <activity android:name=".SearchDiaryActivity" >
+        </activity>
     </application>
 
 </manifest>

@@ -55,7 +55,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/imageView"
             android:layout_gravity="center_horizontal"
-            android:contentDescription="@string/image" />
+            android:contentDescription="@string/image"
+            android:scaleType="fitXY"/>
 
         <Button
             android:layout_width="wrap_content"

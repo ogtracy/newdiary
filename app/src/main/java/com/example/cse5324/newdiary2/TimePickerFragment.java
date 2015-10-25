@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
-import android.widget.Button;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -20,7 +20,7 @@ public class TimePickerFragment extends DialogFragment
     int buttonID;
 
     public interface OnTimeSelectionListener{
-        public void onTimeSet(int hour, int minute, int buttonID);
+        void onTimeSet(int hour, int minute, int buttonID);
     }
 
     @Override
@@ -29,6 +29,7 @@ public class TimePickerFragment extends DialogFragment
         mListener = (OnTimeSelectionListener)act;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current time as the default values for the picker

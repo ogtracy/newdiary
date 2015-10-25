@@ -20,10 +20,10 @@ import java.util.List;
 
 public class EventsFragment extends ListFragment {
     private List<EventListItem> eventListItemList;
+    private EventListAdapter adapter;
 
     public static EventsFragment newInstance() {
-        EventsFragment fragment = new EventsFragment();
-        return fragment;
+        return new EventsFragment();
     }
 
     public EventsFragment() {
@@ -34,8 +34,8 @@ public class EventsFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         eventListItemList = new ArrayList<>();
-        populateList();
-        setListAdapter(new EventListAdapter(getActivity(), eventListItemList));
+        adapter = new EventListAdapter(getActivity(), eventListItemList);
+        setListAdapter(adapter);
     }
 
     private void populateList(){
@@ -82,6 +82,13 @@ public class EventsFragment extends ListFragment {
         }
         c.close();
 
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        adapter.clear();
+        populateList();
     }
 
     @Override

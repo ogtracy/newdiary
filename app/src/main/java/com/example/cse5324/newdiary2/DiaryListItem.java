@@ -45,6 +45,9 @@ public class DiaryListItem {
     public Calendar getDate() {
         return date;
     }
+    public long getID(){
+        return date.getTimeInMillis();
+    }
 
     public String getPicPath() {
         return picPath;

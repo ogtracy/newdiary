@@ -1,5 +1,6 @@
 package com.example.cse5324.newdiary2;
 
+import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,15 +13,15 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
@@ -30,8 +31,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class CreateEventActivity extends AppCompatActivity
-        implements TimePickerFragment.OnTimeSelectionListener, DatePickerFragment.OnDateSelectionListener{
+        implements TimePickerFragment.OnTimeSelectionListener, DatePickerFragment.OnDateSelectionListener,
+        SearchDialog.AddNoteListener, DiaryListAdapter.DiaryListener{
 
+    private static final int ADDNOTE = 277;
     private EditText eventName;
     private EditText location,description;
     private Button startDate, startTime, endDate, endTime;
@@ -44,6 +47,7 @@ public class CreateEventActivity extends AppCompatActivity
     private boolean endTimeSet;
     private static final int PLACE_PICKER_REQUEST = 457;
     private CheckBox allowReminders;
+    DiaryListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +66,6 @@ public class CreateEventActivity extends AppCompatActivity
     {
         startDate= (Button)findViewById(R.id.startDate);
         startDate.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 showDatePickerDialog(R.id.startDate);
@@ -70,7 +73,6 @@ public class CreateEventActivity extends AppCompatActivity
         });
         startTime= (Button)findViewById(R.id.startTime);
         startTime.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 showTimePickerDialog(R.id.startTime);
@@ -104,6 +106,32 @@ public class CreateEventActivity extends AppCompatActivity
         location=(EditText)findViewById(R.id.location);
         description=(EditText)findViewById(R.id.description);
         allowReminders = (CheckBox)findViewById(R.id.reminders);
+        ListView listView = (ListView) findViewById(R.id.listView);
+        ArrayList<DiaryListItem> list = new ArrayList<>();
+        adapter = new DiaryListAdapter(this, list);
+        adapter.setListener(this);
+        listView.setAdapter(adapter);
+        listView.setOnTouchListener(new ListView.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+
+                // Handle ListView touch events.
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
     }
 
     public void saveEvent(View v)
@@ -149,7 +177,7 @@ public class CreateEventActivity extends AppCompatActivity
             focusView = this.endDate;
             cancel = true;
         }
-        if (start.getTimeInMillis() > end.getTimeInMillis()){
+        if (end.getTimeInMillis() < start.getTimeInMillis()){
             this.endDate.setError("End time before start time");
             focusView = this.endDate;
             cancel = true;
@@ -171,7 +199,7 @@ public class CreateEventActivity extends AppCompatActivity
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(EventContract.EventEntry.COLUMN_NAME_EVENT, eventName);
-        values.put(EventContract.EventEntry.COLUMN_NAME_START, ""+start.getTimeInMillis());
+        values.put(EventContract.EventEntry.COLUMN_NAME_START, "" + start.getTimeInMillis());
         values.put(EventContract.EventEntry.COLUMN_NAME_END, ""+end.getTimeInMillis());
         values.put(EventContract.EventEntry.COLUMN_NAME_LOCATION, location);
         values.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, description);
@@ -261,15 +289,19 @@ public class CreateEventActivity extends AppCompatActivity
 
         ContentResolver contentResolver = getApplicationContext().getContentResolver();
         Cursor managedCursor = contentResolver.query(calendars, projection, null, null, null);
-
+        if (managedCursor == null){
+            return null;
+        }
         if (managedCursor.moveToFirst()){
             int idCol = managedCursor.getColumnIndex(projection[0]);
             return managedCursor.getString(idCol);
         }
+        managedCursor.close();
         return null;
     }
     private long addEventToCalendar(String eventName, String eventDescription, String eventLocation, boolean allowReminders){
         String calId = getCalendarId();
+        long eventID = 0;
         if (calId == null) {
             // no calendar account; react meaningfully
             return -1;
@@ -283,10 +315,11 @@ public class CreateEventActivity extends AppCompatActivity
         values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getDisplayName(Locale.getDefault()));
         values.put(CalendarContract.Events.EVENT_LOCATION, eventLocation);
-        //TODO add reminders
         Uri uri = getApplicationContext().getContentResolver().insert(CalendarContract.Events.CONTENT_URI, values);
-        long eventId = Long.valueOf(uri.getLastPathSegment());
-        return eventId;
+        if (uri != null) {
+            eventID = Long.valueOf(uri.getLastPathSegment());
+        }
+        return eventID;
     }
 
     private void pickLocation(){
@@ -294,10 +327,38 @@ public class CreateEventActivity extends AppCompatActivity
         Context context = getApplicationContext();
         try {
             startActivityForResult(builder.build(context), PLACE_PICKER_REQUEST);
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void importImage(View v){
+        Toast toast= Toast.makeText(getApplicationContext(), "This should import an image", Toast.LENGTH_LONG);
+        toast.show();
+    }
+    public void addNote(View v){
+        //Intent intent = new Intent(this, SearchDiaryActivity.class);
+        //startActivityForResult(intent, ADDNOTE);
+        DialogFragment newFragment = new SearchDialog();
+
+        newFragment.show(getSupportFragmentManager(), "searchDiary");
+    }
+
+    @Override
+    public void addNote(DiaryListItem item) {
+        adapter.add(item);
+    }
+
+    @Override
+    public void remove(int position) {
+        DiaryListItem item = (DiaryListItem) adapter.getItem(position);
+        adapter.remove(adapter.getItem(position));
+    }
+
+    @Override
+    public int getType(){
+        return DiaryListAdapter.NONSELECTABLE;
+    }
+    @Override
+    public void check(int position, boolean checked){
     }
 }

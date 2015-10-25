@@ -18,6 +18,11 @@ import java.util.List;
  * Created by oguni on 10/21/2015.
  */
 public class EventListAdapter extends ArrayAdapter {
+    private EventDeleteListener eventListener;
+
+    public interface EventDeleteListener{
+        void delete(int index);
+    }
     public EventListAdapter(Context context, List<EventListItem> items){
         super(context, R.layout.diary_list_item, items);
     }
@@ -75,5 +80,9 @@ public class EventListAdapter extends ArrayAdapter {
 
     private void deleteEvent(int position){
 
+    }
+
+    public void setListener(EventDeleteListener listener){
+        this.eventListener = listener;
     }
 }

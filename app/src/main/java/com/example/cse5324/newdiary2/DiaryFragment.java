@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,9 +19,10 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class DiaryFragment extends ListFragment{
+public class DiaryFragment extends ListFragment implements DiaryListAdapter.DiaryListener{
 
     private List<DiaryListItem> diaryListItemList;
+    private DiaryListAdapter adapter;
 
 
     public static DiaryFragment newInstance() {
@@ -31,8 +33,9 @@ public class DiaryFragment extends ListFragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         diaryListItemList = new ArrayList<>();
-        populateList();
-        setListAdapter(new DiaryListAdapter(getActivity(), diaryListItemList));
+        adapter = new DiaryListAdapter(getActivity(), diaryListItemList);
+        adapter.setListener(this);
+        setListAdapter(adapter);
     }
 
     private void populateList(){
@@ -63,16 +66,20 @@ public class DiaryFragment extends ListFragment{
                 String itemText = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TEXT));
                 String itemTime = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TIME));
                 String itemIMG = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_IMG));
-
-
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(Long.parseLong(itemTime));
-                diaryListItemList.add(new DiaryListItem(itemIMG, itemTitle, itemText, cal));
+                adapter.add(new DiaryListItem(itemIMG, itemTitle, itemText, cal));
                 count++;
                 c.moveToNext();
             }
         c.close();
 
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        adapter.clear();
+        populateList();
     }
 
     @Override
@@ -83,7 +90,7 @@ public class DiaryFragment extends ListFragment{
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        DiaryListItem item = this.diaryListItemList.get(position);
+        DiaryListItem item = diaryListItemList.get(position);
         Intent intent = new Intent(getActivity(), ViewNoteActivity.class);
         intent.putExtra("title", item.getItemTitle());
         intent.putExtra("text", item.getItemContent());
@@ -97,6 +104,27 @@ public class DiaryFragment extends ListFragment{
         super.onViewCreated(view, savedInstanceState);
         // remove the dividers from the ListView of the ListFragment
         getListView().setDivider(null);
+    }
+
+    @Override
+    public void remove(int position) {
+        DiaryListItem item = (DiaryListItem) adapter.getItem(position);
+        String itemId = "" + item.getDate().getTimeInMillis();
+        String selection = NoteContract.NoteEntry.COLUMN_NAME_TIME + "=?";
+        String[] selectionArgs = {itemId};
+        DBHelper dbHelper = new DBHelper(getActivity().getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(NoteContract.NoteEntry.TABLE_NAME, selection, selectionArgs);
+        adapter.remove(adapter.getItem(position));
+        Toast.makeText(getActivity().getApplicationContext(), "Item Deleted", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public int getType(){
+        return DiaryListAdapter.NONSELECTABLE;
+    }
+    @Override
+    public void check(int position, boolean checked){
     }
 
     /**
