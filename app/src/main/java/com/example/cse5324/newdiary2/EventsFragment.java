@@ -1,9 +1,13 @@
 package com.example.cse5324.newdiary2;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ListView;
@@ -122,6 +126,9 @@ public class EventsFragment extends ListFragment implements EventListAdapter.Eve
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(EventContract.EventEntry.TABLE_NAME, selection, selectionArgs);
         adapter.remove(adapter.getItem(position));
+        ContentResolver cr = getActivity().getApplicationContext().getContentResolver();
+        Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, item.getEventID());
+        cr.delete(deleteUri, null, null);
         Toast.makeText(getActivity().getApplicationContext(), "Item Deleted", Toast.LENGTH_LONG).show();
     }
 
