@@ -22,14 +22,14 @@ import java.util.Calendar;
 /**
  * Created by oguni on 10/23/2015.
  */
-public class SearchDialog extends DialogFragment implements DiaryListAdapter.DiaryListener{
+public class SearchDialog extends DialogFragment implements MyListAdapter.MyListAdapterListener{
     public static final int MAX_SEARCH_RESULTS = 20;
     ArrayList<DiaryListItem> mSelectedItems;
     Button searchButton;
     TextView searchText;
-    DiaryListAdapter adapter;
+    MyListAdapter adapter;
     private AddNoteListener listener;
-    ArrayList<DiaryListItem> list;
+    ArrayList<MyListItem> list;
 
     @NonNull
     @Override
@@ -62,7 +62,7 @@ public class SearchDialog extends DialogFragment implements DiaryListAdapter.Dia
 
         ListView listView = (ListView) rootView.findViewById(R.id.listView);
         list = new ArrayList<>();
-        adapter = new DiaryListAdapter(getActivity().getApplicationContext(), list);
+        adapter = new MyListAdapter(getActivity().getApplicationContext(), list);
         adapter.setListener(this);
         listView.setAdapter(adapter);
         return builder.create();

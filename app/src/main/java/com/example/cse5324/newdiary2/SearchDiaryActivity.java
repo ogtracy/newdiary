@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class SearchDiaryActivity extends ListActivity {
-    ArrayList<DiaryListItem> list;
+    ArrayList<MyListItem> list;
     DiaryListAdapter adapter;
     ArrayList<Integer> mSelectedItems;
     Button searchButton;

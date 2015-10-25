@@ -19,9 +19,9 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class DiaryFragment extends ListFragment implements DiaryListAdapter.DiaryListener{
+public class DiaryFragment extends ListFragment implements MyListAdapter.MyListAdapterListener{
 
-    private List<DiaryListItem> diaryListItemList;
+    private List<MyListItem> diaryListItemList;
     private DiaryListAdapter adapter;
 
 
@@ -90,7 +90,7 @@ public class DiaryFragment extends ListFragment implements DiaryListAdapter.Diar
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        DiaryListItem item = diaryListItemList.get(position);
+        DiaryListItem item = (DiaryListItem)diaryListItemList.get(position);
         Intent intent = new Intent(getActivity(), ViewNoteActivity.class);
         intent.putExtra("title", item.getName());
         intent.putExtra("text", item.getDescription());
@@ -121,7 +121,7 @@ public class DiaryFragment extends ListFragment implements DiaryListAdapter.Diar
 
     @Override
     public int getType(){
-        return DiaryListAdapter.NONSELECTABLE;
+        return MyListAdapter.NONSELECTABLE;
     }
     @Override
     public void check(int position, boolean checked){

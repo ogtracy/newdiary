@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class EventsFragment extends ListFragment implements EventListAdapter.EventListListener {
-    private List<EventListItem> eventListItemList;
+public class EventsFragment extends ListFragment implements MyListAdapter.MyListAdapterListener {
+    private List<MyListItem> eventListItemList;
     private EventListAdapter adapter;
 
     public static EventsFragment newInstance() {
@@ -103,7 +103,7 @@ public class EventsFragment extends ListFragment implements EventListAdapter.Eve
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        EventListItem item = this.eventListItemList.get(position);
+        EventListItem item = (EventListItem)this.eventListItemList.get(position);
         //Intent intent = new Intent(getActivity(), ViewEventActivity.class);
         //put stuff in intent;
         //startActivity(intent);
@@ -130,6 +130,16 @@ public class EventsFragment extends ListFragment implements EventListAdapter.Eve
         Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, item.getID());
         cr.delete(deleteUri, null, null);
         Toast.makeText(getActivity().getApplicationContext(), "Item Deleted", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public int getType() {
+        return MyListAdapter.NONSELECTABLE;
+    }
+
+    @Override
+    public void check(int position, boolean isChecked) {
+
     }
 
     /**

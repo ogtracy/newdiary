@@ -2,10 +2,14 @@ package com.example.cse5324.newdiary2;
 
 import android.graphics.drawable.Drawable;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by oguni on 10/25/2015.
  */
-public class MyListItem {
+public abstract class MyListItem {
     private String name;
     private String description;
     private long id;
@@ -40,4 +44,7 @@ public class MyListItem {
     public String getPicPath(){
         return picPath;
     }
+
+
+    public abstract String getDisplayDate();
 }

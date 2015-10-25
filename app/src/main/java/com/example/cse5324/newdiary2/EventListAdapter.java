@@ -19,85 +19,10 @@ import java.util.List;
 /**
  * Created by oguni on 10/21/2015.
  */
-public class EventListAdapter extends ArrayAdapter {
-    private EventListListener eventListener;
+public class EventListAdapter extends MyListAdapter {
 
-    public interface EventListListener{
-        void remove(int index);
-    }
-    public EventListAdapter(Context context, List<EventListItem> items){
-        super(context, R.layout.diary_list_item, items);
+    public EventListAdapter(Context context, List<MyListItem> items){
+        super(context, items);
     }
 
-    private static class ViewHolder {
-        ImageView icon;
-        TextView title;
-        TextView description;
-        TextView startDate, endDate;
-        ImageButton deleteButton;
-    }
-
-    public View getView(final int position, View convertView, ViewGroup parent){
-        ViewHolder holder = null;
-
-        if(convertView == null) {
-            // inflate the GridView item layout
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.event_list_item, parent, false);
-
-            // initialize the view holder
-            holder = new ViewHolder();
-            holder.icon = (ImageView) convertView.findViewById(R.id.icon);
-            holder.title = (TextView) convertView.findViewById(R.id.title);
-            holder.description = (TextView) convertView.findViewById(R.id.content);
-            holder.startDate = (TextView)convertView.findViewById(R.id.startDate);
-            holder.endDate = (TextView)convertView.findViewById(R.id.endDate);
-            holder.deleteButton = (ImageButton)convertView.findViewById(R.id.deleteButton);
-            holder.deleteButton.setOnClickListener(new View.OnClickListener(){
-                public void onClick(View v) {
-                    deleteEvent(position);
-                }
-            });
-            convertView.setTag(holder);
-        } else {
-            // recycle the already inflated view
-            holder = (ViewHolder) convertView.getTag();
-        }
-
-        // update the item view
-        EventListItem item = (EventListItem)getItem(position);
-        holder.icon.setImageDrawable(item.getPic());
-        holder.title.setText(item.getName());
-        holder.description.setText(item.getDescription());
-        Calendar start = item.getStartDate();
-        Calendar end = item.getEndDate();
-
-        Date startDate = start.getTime();
-        Date endDate = end.getTime();
-        DateFormat df = DateFormat.getDateTimeInstance();
-        holder.startDate.setText("Start: " + df.format(startDate));
-        holder.endDate.setText("End: " + df.format(endDate));
-        return convertView;
-    }
-
-    private void deleteEvent(final int position){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage("Deleting Note")
-                .setTitle("Confirmation Message");
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                eventListener.remove(position);
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    public void setListener(EventListListener listener){
-        this.eventListener = listener;
-    }
 }

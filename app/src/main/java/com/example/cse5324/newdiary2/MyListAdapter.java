@@ -12,10 +12,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,9 +20,9 @@ import java.util.List;
 public class MyListAdapter extends ArrayAdapter {
     public static final int NONSELECTABLE = 037;
     public static final int SELECTABLE_NONDELETABLE = 805;
-    List<MyListItem> list;
     boolean[] checkedItems;
     MyListAdapterListener listener;
+    List<MyListItem> list;
 
     public MyListAdapter(Context context, List<MyListItem> items){
         super(context, R.layout.diary_list_item, items);
@@ -64,7 +60,7 @@ public class MyListAdapter extends ArrayAdapter {
             holder.box = (CheckBox) convertView.findViewById(R.id.checkBox);
             holder.deleteButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    deleteNote(position);
+                    deleteItem(position);
                 }
             });
             convertView.setTag(holder);
@@ -99,18 +95,15 @@ public class MyListAdapter extends ArrayAdapter {
             });
         }
 
-        DiaryListItem item = (DiaryListItem)getItem(position);
+        MyListItem item = (MyListItem)getItem(position);
         holder.icon.setImageDrawable(item.getPic());
         holder.title.setText(item.getName());
         holder.description.setText(item.getDescription());
-        Calendar cal = item.getDate();
-        Date d = cal.getTime();
-        DateFormat df = DateFormat.getDateTimeInstance();
-        holder.date.setText(df.format(d));
+        holder.date.setText(item.getDisplayDate());
         return convertView;
     }
 
-    private void deleteNote(final int position){
+    protected void deleteItem(final int position){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage("Deleting Note")
                 .setTitle("Confirmation Message");
@@ -130,4 +123,5 @@ public class MyListAdapter extends ArrayAdapter {
     public void setListener(MyListAdapterListener listener){
         this.listener = listener;
     }
+
 }

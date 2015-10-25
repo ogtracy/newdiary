@@ -34,7 +34,7 @@ import java.util.TimeZone;
 
 public class CreateEventActivity extends AppCompatActivity
         implements TimePickerFragment.OnTimeSelectionListener, DatePickerFragment.OnDateSelectionListener,
-        SearchDialog.AddNoteListener, DiaryListAdapter.DiaryListener{
+        SearchDialog.AddNoteListener, MyListAdapter.MyListAdapterListener{
 
     private static final int RESULT_LOAD_IMAGE = 1997;
     private EditText eventName;
@@ -112,7 +112,7 @@ public class CreateEventActivity extends AppCompatActivity
         description=(EditText)findViewById(R.id.description);
         allowReminders = (CheckBox)findViewById(R.id.reminders);
         ListView listView = (ListView) findViewById(R.id.listView);
-        ArrayList<DiaryListItem> list = new ArrayList<>();
+        ArrayList<MyListItem> list = new ArrayList<>();
         adapter = new DiaryListAdapter(this, list);
         adapter.setListener(this);
         listView.setAdapter(adapter);
