@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -30,11 +31,11 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
         MyListAdapter.MyListAdapterListener{
 
     private static final int RESULT_LOAD_IMAGE = 1998;
+    private static final int PLACE_PICKER_REQUEST = 458;
     private EditText title,location,description;
     private ImageView image;
-    private ListView diaryListView, eventListView;
-    private DiaryListAdapter diaryAdapter;
-    private EventListAdapter eventAdapter;
+    private ListView listView;
+    private DiaryListAdapter adapter;
     private Button startDate, startTime, endDate, endTime;
     private Calendar start;
     private boolean startDateSet;
@@ -95,38 +96,12 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
         location=(EditText)findViewById(R.id.location);
         description=(EditText)findViewById(R.id.description);
 
-        diaryListView = (ListView) findViewById(R.id.diaryListView);
-        eventListView = (ListView) findViewById(R.id.eventListView);
-        ArrayList<MyListItem> diaryList = new ArrayList<>();
-        ArrayList<MyListItem> eventList = new ArrayList<>();
-        diaryAdapter = new DiaryListAdapter(this, diaryList);
-        eventAdapter = new EventListAdapter(this, eventList);
-        diaryAdapter.setListener(this);
-        eventAdapter.setListener(this);
-        diaryListView.setAdapter(diaryAdapter);
-        eventListView.setAdapter(eventAdapter);
-        diaryListView.setOnTouchListener(new ListView.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        // Disallow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        // Allow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
-                }
-
-                // Handle ListView touch events.
-                v.onTouchEvent(event);
-                return true;
-            }
-        });
-        eventListView.setOnTouchListener(new ListView.OnTouchListener() {
+        listView = (ListView) findViewById(R.id.listView);
+        ArrayList<MyListItem> list = new ArrayList<>();
+        adapter = new DiaryListAdapter(this, list);
+        adapter.setListener(this);
+        listView.setAdapter(adapter);
+        listView.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int action = event.getAction();
@@ -161,26 +136,76 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
         String title=this.title.getText().toString();
         String location=this.location.getText().toString();
         String description=this.description.getText().toString();
-        saveinDBTrip(title,location,description);
-
-        Context context=getApplicationContext();
-        int duration= Toast.LENGTH_LONG;
-        Toast toast= Toast.makeText(context, "SAVED Successfully...", duration);
-        toast.show();
-
+        boolean cancel = false;
+        View focusView = null;
+        if (TextUtils.isEmpty(title)){
+            focusView = this.title;
+            this.title.setError(getString(R.string.error_field_required));
+            cancel = true;
+        }
+        if (!startTimeSet){
+            this.startTime.setError(getString(R.string.error_field_required));
+            focusView = this.startTime;
+            cancel = true;
+        }
+        if (!endTimeSet){
+            this.endTime.setError(getString(R.string.error_field_required));
+            focusView = this.endTime;
+            cancel = true;
+        }
+        if (!startDateSet){
+            this.startDate.setError(getString(R.string.error_field_required));
+            focusView = this.startDate;
+            cancel = true;
+        }
+        if (!endDateSet){
+            this.endDate.setError(getString(R.string.error_field_required));
+            focusView = this.endDate;
+            cancel = true;
+        }
+        if (end.getTimeInMillis() < start.getTimeInMillis()){
+            this.endDate.setError("End time before start time");
+            focusView = this.endDate;
+            cancel = true;
+            Toast toast= Toast.makeText(getApplicationContext(), "End time is before start time", Toast.LENGTH_LONG);
+            toast.show();
+        }
+        if (cancel){
+            focusView.requestFocus();
+        } else {
+            save(title, location, description);
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_LONG;
+            Toast toast = Toast.makeText(context, "SAVED Successfully...", duration);
+            toast.show();
+        }
     }
 
-    private void saveinDBTrip(String title,String location,String description)
+    private void save(String title,String location,String description)
     {
         DBHelper dbHelper = new DBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
+        String id = "" + Calendar.getInstance().getTimeInMillis();
+        String noteIDs = "";
+        String eventIDs = "";
+        for (int x=0; x<adapter.getCount(); x++){
+            MyListItem item = (MyListItem)adapter.getItem(x);
+            if (item.getClass() == DiaryListItem.class){
+                noteIDs += item.getID() +" ";
+            } else {
+                eventIDs += item.getID() + " ";
+            }
+        }
         values.put(TripContract.TripEntry.COLUMN_NAME_TITLE, title);
         values.put(TripContract.TripEntry.COLUMN_NAME_LOCATION, location);
         values.put(TripContract.TripEntry.COLUMN_NAME_DESCRIPTION, description);
+        values.put(TripContract.TripEntry.COLUMN_NAME_IMG, picturePath);
+        values.put(TripContract.TripEntry.COLUMN_NAME_TRIP_ID, id);
+        values.put(TripContract.TripEntry.COLUMN_NAME_EVENT_IDS, eventIDs);
+        values.put(TripContract.TripEntry.COLUMN_NAME_NOTE_IDS, noteIDs);
         long rowid=db.insert(TripContract.TripEntry.TABLE_NAME, "null", values);
         finish();
-
     }
 
     private void showTimePickerDialog(int buttonID) {
@@ -201,20 +226,9 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
 
     @Override
     public void remove(int tag, int position) {
-        diaryAdapter.remove(diaryAdapter.getItem(position));
-        if (diaryAdapter.getCount() == 0){
-            diaryListView.setVisibility(View.GONE);
-        }
-        if (tag == MyListAdapter.EVENT_TAG) {
-            //diaryAdapter.remove(diaryAdapter.getItem(position));
-            //if (diaryAdapter.getCount() == 0){
-            //    diaryListView.setVisibility(View.GONE);
-            //}
-        } else {
-            //eventAdapter.remove(eventAdapter.getItem(position));
-            //if (eventAdapter.getCount() == 0){
-            //    eventListView.setVisibility(View.GONE);
-            //}
+        adapter.remove(adapter.getItem(position));
+        if (adapter.getCount() == 0){
+            listView.setVisibility(View.GONE);
         }
     }
 
@@ -223,6 +237,14 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
+            case PLACE_PICKER_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    Place place = PlacePicker.getPlace(data, this);
+                    String text = String.valueOf(place.getName());
+                    text = text + ": " + String.valueOf(place.getAddress());
+                    location.setText(text);
+                }
+                break;
             case RESULT_LOAD_IMAGE: {
                 if (resultCode == RESULT_OK && null!=data){
                     Uri selectedImage = data.getData();
@@ -313,14 +335,17 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
 
     @Override
     public void addItem(MyListItem item, int tag) {
-        diaryAdapter.add(item);
-        diaryListView.setVisibility(View.VISIBLE);
-        if (tag == SearchDialog.DIARY_TAG){
-            //diaryAdapter.add(item);
-            //diaryListView.setVisibility(View.VISIBLE);
-        } else {
-           // eventAdapter.add(item);
-            //eventListView.setVisibility(View.VISIBLE);
+        adapter.add(item);
+        listView.setVisibility(View.VISIBLE);
+    }
+
+    public void pickLocation(View v){
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        Context context = getApplicationContext();
+        try {
+            startActivityForResult(builder.build(context), PLACE_PICKER_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

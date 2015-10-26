@@ -85,11 +85,26 @@
                 android:id="@+id/endTime" />
         </LinearLayout>
 
-        <EditText
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/location"
-            android:inputType="textCapSentences|textPostalAddress" />
+            android:layout_height="match_parent">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/location"
+                android:inputType="textCapSentences|textPostalAddress"
+                android:hint="@string/location"
+                android:layout_weight="1" />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickLocation"
+                android:src="@drawable/place"
+                android:layout_weight="1"
+                android:onClick="pickLocation" />
+        </LinearLayout>
 
         <EditText
             android:layout_width="fill_parent"
@@ -132,14 +147,7 @@
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="100dp"
-            android:id="@+id/diaryListView"
-            android:visibility="gone" />
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:id="@+id/eventListView"
-            android:layout_gravity="center_horizontal"
+            android:id="@+id/listView"
             android:visibility="gone" />
 
     </LinearLayout>

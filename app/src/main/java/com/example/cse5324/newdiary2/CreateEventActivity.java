@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -99,14 +98,6 @@ public class CreateEventActivity extends AppCompatActivity
                 showTimePickerDialog(R.id.endTime);
             }
         });
-        ImageButton pickLocation = (ImageButton)findViewById(R.id.pickLocation);
-        pickLocation.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                pickLocation();
-            }
-        });
         eventName= (EditText)findViewById(R.id.eventName);
         location=(EditText)findViewById(R.id.location);
         description=(EditText)findViewById(R.id.description);
@@ -145,11 +136,6 @@ public class CreateEventActivity extends AppCompatActivity
         String location=this.location.getText().toString();
         String description = this.description.getText().toString();
 
-        saveinDBEvent(eventName, location, description);
-    }
-
-    private void saveinDBEvent(String eventName, String location, String description)
-    {
         boolean cancel = false;
         View focusView = null;
         if (TextUtils.isEmpty(eventName)){
@@ -191,15 +177,21 @@ public class CreateEventActivity extends AppCompatActivity
         }
         if (cancel){
             focusView.requestFocus();
-            return;
+        } else {
+            save(eventName, location, description);
+            //show confirmation
+            Context context=getApplicationContext();
+            int duration=Toast.LENGTH_LONG;
+            Toast toast= Toast.makeText(context, "SAVED Successfully...", duration);
+            toast.show();
+            finish();
         }
-        boolean allowReminders = this.allowReminders.isChecked();
-        String eventID = "" + addEventToCalendar(eventName, description, location, allowReminders);
-        save(eventName, location, description, eventID);
-
     }
 
-    private void save(String eventName, String location, String description, String eventID){
+    private void save(String eventName, String location, String description){
+        boolean allowReminders = this.allowReminders.isChecked();
+        String eventID = "" + addEventToCalendar(eventName, description, location, allowReminders);
+
         DBHelper dbHelper = new DBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -217,13 +209,6 @@ public class CreateEventActivity extends AppCompatActivity
         }
         values.put(EventContract.EventEntry.COLUMN_NAME_NOTE_IDS, noteIDs);
         long rowid=db.insert(EventContract.EventEntry.TABLE_NAME, "null", values);
-
-        //show confirmation
-        Context context=getApplicationContext();
-        int duration=Toast.LENGTH_LONG;
-        Toast toast= Toast.makeText(context, "SAVED Successfully...", duration);
-        toast.show();
-        finish();
     }
 
     private void showTimePickerDialog(int buttonID) {
@@ -358,7 +343,7 @@ public class CreateEventActivity extends AppCompatActivity
         return eventID;
     }
 
-    private void pickLocation(){
+    public void pickLocation(View v){
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
         Context context = getApplicationContext();
         try {
