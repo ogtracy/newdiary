@@ -23,6 +23,7 @@ public class EventListAdapter extends MyListAdapter {
 
     public EventListAdapter(Context context, List<MyListItem> items){
         super(context, items);
+        super.setTag(MyListAdapter.EVENT_TAG);
     }
 
 }

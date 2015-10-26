@@ -107,7 +107,7 @@ public class DiaryFragment extends ListFragment implements MyListAdapter.MyListA
     }
 
     @Override
-    public void remove(int position) {
+    public void remove(int tag, int position) {
         DiaryListItem item = (DiaryListItem) adapter.getItem(position);
         String itemId = "" + item.getID();
         String selection = NoteContract.NoteEntry.COLUMN_NAME_TIME + "=?";

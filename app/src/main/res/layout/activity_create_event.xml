@@ -81,7 +81,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/eventName"
-            android:hint="@string/event_name" />
+            android:hint="@string/event_name"
+            android:inputType="textCapCharacters" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -91,7 +92,7 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textPostalAddress|textMultiLine"
+                android:inputType="textCapSentences|textPostalAddress|textMultiLine"
                 android:ems="10"
                 android:id="@+id/location"
                 android:hint="@string/location"
@@ -109,7 +110,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
+            android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
             android:ems="10"
             android:id="@+id/description"
             android:hint="@string/event_description"
@@ -137,7 +138,6 @@
             android:onClick="addNote"/>
 
         <Button
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/save"

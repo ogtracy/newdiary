@@ -17,12 +17,15 @@ import java.util.List;
 /**
  * Created by oguni on 10/25/2015.
  */
-public class MyListAdapter extends ArrayAdapter {
+public abstract class MyListAdapter extends ArrayAdapter {
     public static final int NONSELECTABLE = 037;
     public static final int SELECTABLE_NONDELETABLE = 805;
+    public static final int NOTE_TAG =922;
+    public static final int EVENT_TAG = 900;
     boolean[] checkedItems;
     MyListAdapterListener listener;
     List<MyListItem> list;
+    private int tag;
 
     public MyListAdapter(Context context, List<MyListItem> items){
         super(context, R.layout.diary_list_item, items);
@@ -31,7 +34,7 @@ public class MyListAdapter extends ArrayAdapter {
     }
 
     public interface MyListAdapterListener{
-        void remove(int index);
+        void remove(int tag, int index);
         int getType();
         void check(int position, boolean isChecked);
     }
@@ -109,7 +112,7 @@ public class MyListAdapter extends ArrayAdapter {
                 .setTitle("Confirmation Message");
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                listener.remove(position);
+                listener.remove(tag, position);
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -122,6 +125,10 @@ public class MyListAdapter extends ArrayAdapter {
 
     public void setListener(MyListAdapterListener listener){
         this.listener = listener;
+    }
+
+    protected void setTag(int tag){
+        this.tag = tag;
     }
 
 }

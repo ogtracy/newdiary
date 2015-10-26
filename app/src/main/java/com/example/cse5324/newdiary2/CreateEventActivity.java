@@ -258,10 +258,12 @@ public class CreateEventActivity extends AppCompatActivity
         if (buttonID == R.id.startTime){
             start.set(Calendar.HOUR_OF_DAY, hour);
             start.set(Calendar.MINUTE, minute);
+            start.set(Calendar.SECOND, 0);
             startTimeSet = true;
         } else if (buttonID == R.id.endTime){
             end.set(Calendar.HOUR_OF_DAY, hour);
             end.set(Calendar.MINUTE, minute);
+            end.set(Calendar.SECOND, 0);
             endTimeSet = true;
         }
     }
@@ -373,16 +375,19 @@ public class CreateEventActivity extends AppCompatActivity
     }
     public void addNote(View v){
         DialogFragment newFragment = new SearchDialog();
+        Bundle bundle = new Bundle();
+        bundle.putInt(SearchDialog.TAG, SearchDialog.DIARY_TAG);
+        newFragment.setArguments(bundle);
         newFragment.show(getSupportFragmentManager(), "searchDiary");
     }
 
     @Override
-    public void addNote(DiaryListItem item) {
+    public void addItem(MyListItem item, int tag) {
         adapter.add(item);
     }
 
     @Override
-    public void remove(int position) {
+    public void remove(int tag, int position) {
         adapter.remove(adapter.getItem(position));
     }
 

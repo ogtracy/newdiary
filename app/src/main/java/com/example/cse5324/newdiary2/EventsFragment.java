@@ -117,7 +117,7 @@ public class EventsFragment extends ListFragment implements MyListAdapter.MyList
     }
 
     @Override
-    public void remove(int position) {
+    public void remove(int tag, int position) {
         EventListItem item = (EventListItem) adapter.getItem(position);
         String itemId = "" + item.getID();
         String selection = EventContract.EventEntry.COLUMN_NAME_EVENT_ID + "=?";
