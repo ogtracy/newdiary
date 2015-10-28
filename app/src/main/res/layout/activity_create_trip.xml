@@ -29,7 +29,7 @@
             android:hint="@string/trip_name"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:singleLine="true"
-            android:inputType="textCapCharacters" />
+            android:inputType="textCapWords" />
 
         <LinearLayout
             android:orientation="horizontal"

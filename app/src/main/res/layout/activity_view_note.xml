@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:text="@string/delete"
             android:id="@+id/deleteButton"
-            android:layout_below="@+id/text"
+            android:layout_below="@+id/image"
             android:layout_centerHorizontal="true"
             android:onClick="delete" />
 

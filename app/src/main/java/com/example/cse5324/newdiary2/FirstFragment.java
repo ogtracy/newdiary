@@ -36,7 +36,7 @@ public class FirstFragment extends Fragment {
     private Spinner sunSign;
     private View rootView;
     private boolean hasChanged;
-
+    private OnFragmentInteractionListener listener;
 
     public static FirstFragment newInstance() {
         return new FirstFragment();
@@ -83,8 +83,7 @@ public class FirstFragment extends Fragment {
     }
 
     private void goToNext() {
-        MainActivity act = (MainActivity)getActivity();
-        act.replaceFragment(SecondFragment.newInstance());
+        listener.replaceFragment(SecondFragment.newInstance());
     }
 
     private void addListeners(){
@@ -170,7 +169,7 @@ public class FirstFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(1);
+        listener = (OnFragmentInteractionListener)activity;
     }
 
     @Override

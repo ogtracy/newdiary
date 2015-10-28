@@ -32,6 +32,7 @@ public class ThirdFragment extends Fragment {
     EditText favSong;
     EditText favSinger;
     EditText favDrink;
+    private OnFragmentInteractionListener listener;
 
     public static ThirdFragment newInstance() {
         return new ThirdFragment();
@@ -160,15 +161,13 @@ public class ThirdFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(1);
+        listener = (OnFragmentInteractionListener)activity;
     }
 
     private void goToNext() {
-        MainActivity act = (MainActivity)getActivity();
-        act.replaceFragment(FourthFragment.newInstance());
+        listener.replaceFragment(FourthFragment.newInstance());
     }
     private void goToPrev() {
-        MainActivity act = (MainActivity)getActivity();
-        act.replaceFragment(SecondFragment.newInstance());
+        listener.replaceFragment(SecondFragment.newInstance());
     }
 }

@@ -30,7 +30,6 @@ public class HomeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private FrameLayout base;
-    private Button changeImg;
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -46,9 +45,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     @Override
@@ -56,7 +52,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         base = (FrameLayout)v.findViewById(R.id.base);
-        changeImg = (Button)v.findViewById(R.id.changeImageButton);
+        Button changeImg = (Button) v.findViewById(R.id.changeImageButton);
         changeImg.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 changeImage();
@@ -82,7 +78,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(1);
+        //((MainActivity) activity).onSectionAttached(0);
     }
 
     @Override
@@ -112,7 +108,7 @@ public class HomeFragment extends Fragment {
 
         switch (requestCode) {
             case RESULT_LOAD_IMAGE: {
-                if (resultCode == MainActivity.RESULT_OK && null!=data){
+                if (resultCode == Main2Activity.RESULT_OK && null!=data){
                     Uri selectedImage = data.getData();
                     String[] filePathColumn = { MediaStore.Images.Media.DATA };
 

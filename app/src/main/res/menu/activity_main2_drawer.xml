@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/home"
+            android:icon="@android:drawable/ic_menu_camera"
+            android:title="@string/home" />
+        <item android:id="@+id/personal"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:title="@string/personal" />
+        <item android:id="@+id/calendar"
+            android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="@string/calendar" />
+        <item android:id="@+id/map"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="@string/map" />
+    </group>
+
+    <item android:title="Organizer">
+        <menu>
+            <item android:id="@+id/diary"
+                android:icon="@android:drawable/ic_menu_share"
+                android:title="@string/diary" />
+            <item android:id="@+id/events"
+                android:icon="@android:drawable/ic_menu_send"
+                android:title="@string/events" />
+            <item android:id="@+id/trips"
+                android:icon="@android:drawable/ic_menu_my_calendar"
+                android:title="@string/trips" />
+        </menu>
+    </item>
+
+</menu>

@@ -34,17 +34,24 @@
         </activity>
         <activity android:name=".CreateProfileActivity" >
         </activity>
-        <activity android:name=".MainActivity" >
-        </activity>
         <activity android:name=".SampleActivity" >
         </activity>
         <activity android:name=".DrawActivity" >
         </activity>
         <activity android:name=".CreateEventActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.cse5324.newdiary2.MainActivity" />
         </activity>
         <activity android:name=".CreateTripActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.cse5324.newdiary2.MainActivity" />
         </activity>
         <activity android:name=".CreateNoteActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.cse5324.newdiary2.MainActivity" />
         </activity>
         <activity android:name=".ViewNoteActivity" >
         </activity>
@@ -62,6 +69,16 @@
         <activity android:name=".ViewDateActivity" >
         </activity>
         <activity android:name=".SearchDiaryActivity" >
+        </activity>
+        <activity
+            android:name=".Main2Activity"
+            android:label="@string/title_activity_main2"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>
 

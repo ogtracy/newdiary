@@ -36,12 +36,23 @@
         completions."
     </string>
     <string name="title">Profile</string>
-    <string name="title_section1">PERSONAL</string>
-    <string name="title_section2">AMBITION</string>
-    <string name="title_section3">FAVORITE</string>
-    <string name="title_section4">THOUGHTS</string>
-    <string name="title_section5">CALENDAR</string>
-    <string name="title_section6">MAPS</string>
+    <string-array name="navigation_drawer_fragments">
+        <item>Home</item>
+        <item>Personal</item>
+        <item>Calendar</item>
+        <item>Map</item>
+        <item>Diary</item>
+        <item>Events</item>
+        <item>Trips</item>
+    </string-array>
+
+    <string name="home">Home</string>
+    <string name="personal">Personal</string>
+    <string name="calendar">Calendar</string>
+    <string name="map">Map</string>
+    <string name="diary">Diary</string>
+    <string name="events">Events</string>
+    <string name="trips">Trips</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -53,18 +64,13 @@
     <string name="brush">Brush</string>
     <string name="erase">Erase</string>
     <string name="paint">Paint</string>
-    <string name="personal">PERSONAL</string>
     <string name="nickname">NICKNAME</string>
     <string name="birthday">BIRTHDAY</string>
     <string name="relationship_status">Relationship Status</string>
     <string name="title_activity_note">NoteActivity</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="title_activity_main22">Main22Activity</string>
 
     <string name="note_hint">Dear Diary…</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="event_name">Event Name</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
@@ -101,12 +107,8 @@
     <string name="add_note">Add Note</string>
     <string name="search">Search</string>
     <string name="search_prompt">Enter a search value</string>
-    <string-array name="toppings">
-        <item>Big Buck Bunny</item>
-        <item>Elephants Dream</item>
-        <item>Sintel</item>
-        <item>Tears of Steel</item>
-    </string-array>
     <string name="pick_toppings">Pick Toppings</string>
     <string name="description">Description</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>

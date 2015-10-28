@@ -22,6 +22,7 @@ public abstract class MyListAdapter extends ArrayAdapter {
     public static final int SELECTABLE_NONDELETABLE = 805;
     public static final int NOTE_TAG =922;
     public static final int EVENT_TAG = 900;
+    public static final int TRIP_TAG = 800;
     boolean[] checkedItems;
     MyListAdapterListener listener;
     List<MyListItem> list;

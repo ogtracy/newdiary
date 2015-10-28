@@ -50,6 +50,7 @@ public class CreateEventActivity extends AppCompatActivity
     private DiaryListAdapter adapter;
     private ImageView image;
     private String picturePath;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +103,7 @@ public class CreateEventActivity extends AppCompatActivity
         location=(EditText)findViewById(R.id.location);
         description=(EditText)findViewById(R.id.description);
         allowReminders = (CheckBox)findViewById(R.id.reminders);
-        ListView listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.listView);
         ArrayList<MyListItem> list = new ArrayList<>();
         adapter = new DiaryListAdapter(this, list);
         adapter.setListener(this);
@@ -369,11 +370,15 @@ public class CreateEventActivity extends AppCompatActivity
     @Override
     public void addItem(MyListItem item, int tag) {
         adapter.add(item);
+        listView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void remove(int tag, int position) {
         adapter.remove(adapter.getItem(position));
+        if (adapter.getCount() == 0){
+            listView.setVisibility(View.GONE);
+        }
     }
 
     @Override

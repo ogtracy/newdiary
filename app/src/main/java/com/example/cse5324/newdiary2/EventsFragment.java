@@ -26,7 +26,6 @@ public class EventsFragment extends ListFragment implements MyListAdapter.MyList
     }
 
     public EventsFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -77,7 +76,7 @@ public class EventsFragment extends ListFragment implements MyListAdapter.MyList
             Calendar start = Calendar.getInstance();
             start.setTimeInMillis(Long.parseLong(eventStart));
             Calendar end = Calendar.getInstance();
-            start.setTimeInMillis(Long.parseLong(eventEnd));
+            end.setTimeInMillis(Long.parseLong(eventEnd));
             long eventID = Long.parseLong(id);
             EventListItem event= new EventListItem(eventTitle, eventDescription, eventLocation, eventID, start, end, imgPath, notes);
             eventListItemList.add(event);
@@ -93,12 +92,6 @@ public class EventsFragment extends ListFragment implements MyListAdapter.MyList
         super.onResume();
         adapter.clear();
         populateList();
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(1);
     }
 
     @Override

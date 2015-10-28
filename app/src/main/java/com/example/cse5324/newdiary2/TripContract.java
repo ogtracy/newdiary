@@ -18,5 +18,7 @@ public final class TripContract {
         public static final String COLUMN_NAME_IMG = "image";
         public static final String COLUMN_NAME_EVENT_IDS ="eventids";
         public static final String COLUMN_NAME_TRIP_ID = "tripid";
+        public static final String COLUMN_NAME_START = "starttime";
+        public static final String COLUMN_NAME_END = "endtime";
     }
 }

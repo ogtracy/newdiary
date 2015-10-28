@@ -21,7 +21,7 @@ public class SampleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.draw_layout);
         ratebar = (RatingBar) findViewById(R.id.ratingBar);
         value = (TextView) findViewById(R.id.textView3);
         Submit = (Button) findViewById(R.id.saveButton);

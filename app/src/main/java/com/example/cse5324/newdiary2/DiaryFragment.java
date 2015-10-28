@@ -85,7 +85,7 @@ public class DiaryFragment extends ListFragment implements MyListAdapter.MyListA
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(1);
+        //((MainActivity) activity).onSectionAttached(4);
     }
 
     @Override
@@ -125,21 +125,6 @@ public class DiaryFragment extends ListFragment implements MyListAdapter.MyListA
     }
     @Override
     public void check(int position, boolean checked){
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        //public void onFragmentInteraction(String id);
     }
 
 }

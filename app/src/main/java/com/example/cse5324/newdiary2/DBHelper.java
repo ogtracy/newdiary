@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "FeedReader.db";
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
@@ -36,6 +36,12 @@ public class DBHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + TripContract.TripEntry.TABLE_NAME + " (" +
                     TripContract.TripEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
                     TripContract.TripEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
+                    TripContract.TripEntry.COLUMN_NAME_START + TEXT_TYPE + COMMA_SEP +
+                    TripContract.TripEntry.COLUMN_NAME_END + TEXT_TYPE + COMMA_SEP +
+                    TripContract.TripEntry.COLUMN_NAME_NOTE_IDS + TEXT_TYPE + COMMA_SEP +
+                    TripContract.TripEntry.COLUMN_NAME_EVENT_IDS + TEXT_TYPE + COMMA_SEP +
+                    TripContract.TripEntry.COLUMN_NAME_IMG + TEXT_TYPE + COMMA_SEP +
+                    TripContract.TripEntry.COLUMN_NAME_TRIP_ID + TEXT_TYPE + COMMA_SEP +
                     TripContract.TripEntry.COLUMN_NAME_LOCATION + TEXT_TYPE + " )";
 
     private static final String SQL_DELETE_NOTE_TABLE =

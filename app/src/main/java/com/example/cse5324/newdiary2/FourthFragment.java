@@ -26,6 +26,8 @@ public class FourthFragment extends Fragment {
     private EditText mostImportant;
     private EditText bestQuality;
     private EditText laugh;
+    private OnFragmentInteractionListener listener;
+
     public static FourthFragment newInstance() {
         FourthFragment fragment = new FourthFragment();
         return fragment;
@@ -117,15 +119,13 @@ public class FourthFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(1);
+        listener = (OnFragmentInteractionListener)activity;
     }
 
     private void goToNext() {
-        MainActivity act = (MainActivity)getActivity();
-        act.replaceFragment(FirstFragment.newInstance());
+        listener.replaceFragment(FirstFragment.newInstance());
     }
     private void goToPrev() {
-        MainActivity act = (MainActivity)getActivity();
-        act.replaceFragment(ThirdFragment.newInstance());
+        listener.replaceFragment(ThirdFragment.newInstance());
     }
 }

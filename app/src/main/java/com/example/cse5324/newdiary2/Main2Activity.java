@@ -15,7 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener{
+public class Main2Activity extends AppCompatActivity implements OnFragmentInteractionListener{
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
 
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawer.setDrawerListener(drawerToggle);
         // Find our drawer view
-        NavigationView nvDrawer = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView nvDrawer = (NavigationView) findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
 
         // Find our drawer view

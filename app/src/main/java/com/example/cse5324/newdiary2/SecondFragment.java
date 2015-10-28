@@ -25,6 +25,7 @@ public class SecondFragment extends Fragment {
     private EditText biggestTarget;
     private EditText currentGoal;
     private EditText whereToLive;
+    private OnFragmentInteractionListener listener;
 
     public static SecondFragment newInstance() {
         SecondFragment fragment = new SecondFragment();
@@ -119,15 +120,13 @@ public class SecondFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(1);
+        listener = (OnFragmentInteractionListener)activity;
     }
 
     private void goToNext() {
-        MainActivity act = (MainActivity)getActivity();
-        act.replaceFragment(ThirdFragment.newInstance());
+        listener.replaceFragment(ThirdFragment.newInstance());
     }
     private void goToPrev() {
-        MainActivity act = (MainActivity)getActivity();
-        act.replaceFragment(FirstFragment.newInstance());
+        listener.replaceFragment(FirstFragment.newInstance());
     }
 }
