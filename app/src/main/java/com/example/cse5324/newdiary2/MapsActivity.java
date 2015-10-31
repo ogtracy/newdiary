@@ -4,6 +4,7 @@ import android.content.IntentSender;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,10 +28,18 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHttpResponse;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
-
-
 
 
 public class MapsActivity extends Fragment implements
@@ -43,8 +52,9 @@ public class MapsActivity extends Fragment implements
     public static final String TAG = MapsActivity.class.getSimpleName();
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private LocationRequest mLocationRequest;
-    double latitude = 0;
-    double longitude = 0;
+    double latitude;
+    double longitude;
+    private static String API_KEY = "AIzaSyBVlkkszs7guzsQn2rWp-0WPofvIMSyz7I";
 
     public static MapsActivity newInstance() {
         MapsActivity fragment;
@@ -192,9 +202,9 @@ public class MapsActivity extends Fragment implements
     private void handleNewLocation(Location location) {
         Log.d(TAG, location.toString());
 
-        double currentLatitude = location.getLatitude();
-        double currentLongitude = location.getLongitude();
-        LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        LatLng latLng = new LatLng(latitude, longitude);
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
@@ -269,7 +279,7 @@ public class MapsActivity extends Fragment implements
                 x++;
             }
 
-
+            performSearch(location);
         }
     }
 
@@ -287,8 +297,7 @@ public class MapsActivity extends Fragment implements
 
     public void onZoom(View view)
     {
-        if(view.getId() == R.id.Bzoomin)
-        {
+        if(view.getId() == R.id.Bzoomin) {
             mMap.animateCamera(CameraUpdateFactory.zoomIn());
         }
         if(view.getId() == R.id.Bzoomout)
@@ -310,4 +319,101 @@ public class MapsActivity extends Fragment implements
                 .title("Current Location");
         mMap.addMarker(options);
     }
+
+    public void performSearch(String searchString) {
+        String urlString = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
+        urlString += latitude;
+        urlString += ",";
+        urlString += longitude;
+        urlString += "&radius=500&name=";
+        urlString += searchString;
+        urlString += "&key=";
+        urlString += API_KEY;
+        new FindPlacesTask().execute(urlString);
+    }
+
+    private void updateMap(String results){
+        try {
+            JSONObject resultObj = new JSONObject(results);
+            JSONArray array = resultObj.getJSONArray("results");
+            int x = 0;
+            JSONObject obj = array.getJSONObject(x);
+            while (obj != null){
+                String name = obj.getString("name");
+                JSONObject geometry = obj.getJSONObject("geometry");
+                JSONObject location = geometry.getJSONObject("location");
+                String lat = location.getString("lat");
+                double latitude = Double.parseDouble(lat);
+                String lng = location.getString("lng");
+                double longitude = Double.parseDouble(lng);
+                LatLng latLng = new LatLng(latitude, longitude);
+
+                MarkerOptions options = new MarkerOptions()
+                        .position(latLng)
+                        .title(name);
+                mMap.addMarker(options);
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+
+                x++;
+                obj = array.getJSONObject(x);
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    class FindPlacesTask extends AsyncTask<String, Void, String> {
+
+        private Exception exception;
+
+        protected String doInBackground(String... urls) {
+
+            String urlString = urls[0];
+            DefaultHttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(urlString);
+            InputStream in = null;
+            BufferedReader reader = null;
+            String text = "";
+            BasicHttpResponse httpResponse;
+
+            try {
+                //URL url = new URL(urls[0]);
+                httpResponse = (BasicHttpResponse)httpclient.execute(httpget);
+                in = httpResponse.getEntity().getContent();
+                reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder e = new StringBuilder();
+                String line;
+
+                while((line = reader.readLine()) != null) {
+                    e.append(line);
+                    e.append("\n");
+                }
+
+                text = e.toString();
+                System.out.println(text);
+            } catch (Exception var20) {
+                var20.getMessage();
+            } finally {
+                try {
+                    if(in != null) {
+                        in.close();
+                    }
+
+                    if(reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException var19) {
+                    var19.getMessage();
+                }
+
+            }
+            return text;
+        }
+
+        protected void onPostExecute(String feed) {
+            updateMap(feed);
+        }
+    }
+
 }
