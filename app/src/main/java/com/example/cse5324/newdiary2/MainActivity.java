@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener{
 
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
         // Find our drawer view
         drawerToggle = setupDrawerToggle();
+        returnHome(null);
     }
 
     @Override
@@ -170,6 +172,11 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         getMenuInflater().inflate(R.menu.global, menu);
         return true;
     }
+
+    public void returnHome(View v){
+        replaceFragment(HomeFragment.newInstance());
+    }
+
 
 
 }

@@ -91,7 +91,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && null != data) {
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    text.setText(result.get(0));
+                    text.setText(text.getText() + " " +result.get(0));
                 }
                 break;
             }
@@ -102,12 +102,12 @@ public class CreateNoteActivity extends AppCompatActivity {
 
                     Cursor cursor = getContentResolver().query(selectedImage,
                             filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    picturePath = cursor.getString(columnIndex);
-                    cursor.close();
-
+                    if (cursor!= null) {
+                        cursor.moveToFirst();
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        picturePath = cursor.getString(columnIndex);
+                        cursor.close();
+                    }
                     imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
                 }
             }

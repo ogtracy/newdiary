@@ -108,7 +108,7 @@ public class HomeFragment extends Fragment {
 
         switch (requestCode) {
             case RESULT_LOAD_IMAGE: {
-                if (resultCode == Main2Activity.RESULT_OK && null!=data){
+                if (resultCode == getActivity().RESULT_OK && null!=data){
                     Uri selectedImage = data.getData();
                     String[] filePathColumn = { MediaStore.Images.Media.DATA };
 

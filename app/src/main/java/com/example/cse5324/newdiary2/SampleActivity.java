@@ -10,10 +10,8 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 public class SampleActivity extends AppCompatActivity {
-    public final static String EXTRA_MESSAGE = "com.mycompany.myfirstapp.MESSAGE";
     private RatingBar ratebar;
     private TextView value;
-    private Button Submit;
     private float rate;
 
 
@@ -24,7 +22,7 @@ public class SampleActivity extends AppCompatActivity {
         setContentView(R.layout.draw_layout);
         ratebar = (RatingBar) findViewById(R.id.ratingBar);
         value = (TextView) findViewById(R.id.textView3);
-        Submit = (Button) findViewById(R.id.saveButton);
+        Button submit = (Button) findViewById(R.id.saveButton);
         ratebar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating,
                                         boolean fromUser) {
@@ -65,7 +63,7 @@ public class SampleActivity extends AppCompatActivity {
 
             }
         });
-        Submit.setOnClickListener(new OnClickListener() {
+        submit.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 ratebar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     public void onRatingChanged(RatingBar ratingBar, float rating,
@@ -73,10 +71,6 @@ public class SampleActivity extends AppCompatActivity {
                         rate = rating;
                     }
                 });
-
-
-
-
 
 
             }

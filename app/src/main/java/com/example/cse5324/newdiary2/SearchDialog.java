@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,7 +54,12 @@ public class SearchDialog extends DialogFragment implements MyListAdapter.MyList
         });
         searchText = (TextView) rootView.findViewById(R.id.searchString);
 
-        builder.setTitle(R.string.pick_toppings);
+        if (myTag == DIARY_TAG){
+            builder.setTitle("Search Diary");
+        } else {
+            builder.setTitle("Search Events");
+        }
+
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
