@@ -46,6 +46,13 @@
         <item>Trips</item>
     </string-array>
 
+    <string-array name="purpose_array">
+        <item>Food</item>
+        <item>Drink</item>
+        <item>Business</item>
+        <item>Fun</item>
+    </string-array>
+
     <string name="home">Home</string>
     <string name="personal">Personal</string>
     <string name="calendar">Calendar</string>
@@ -113,4 +120,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="aroundme_placedistance">Distance</string>
     <string name="aroundme_nolocation">No Location</string>
+    <string name="none">none</string>
+    <string name="edit">Edit</string>
+    <string name="export_to_pdf">Export to PDF</string>
 </resources>

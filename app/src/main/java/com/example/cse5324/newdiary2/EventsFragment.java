@@ -3,6 +3,7 @@ package com.example.cse5324.newdiary2;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -97,9 +98,9 @@ public class EventsFragment extends ListFragment implements MyListAdapter.MyList
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         EventListItem item = (EventListItem)this.eventListItemList.get(position);
-        //Intent intent = new Intent(getActivity(), ViewEventActivity.class);
+        Intent intent = new Intent(getActivity(), ViewEventActivity.class);
         //put stuff in intent;
-        //startActivity(intent);
+        startActivity(intent);
     }
 
     @Override

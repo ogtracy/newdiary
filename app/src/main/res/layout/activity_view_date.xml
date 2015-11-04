@@ -18,36 +18,59 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
-            android:id="@+id/textView27"
+            android:text="@string/date"
+            android:id="@+id/date"
             android:layout_gravity="right" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="ANDROID" />
-
         <ListView
-            android:id="@+id/listView1"
+            android:id="@+id/items"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:background="#B29090" >
+            android:layout_height="0dp"
+            android:background="#B29090"
+            android:layout_weight="1">
         </ListView>
 
-        <TextView
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="IOS" />
+            android:gravity="center_horizontal">
 
-        <ListView
-            android:id="@+id/listView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:background="#4A9C67" >
-        </ListView>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/one_star"
+                android:contentDescription="@string/none"
+                android:src="@android:drawable/btn_star"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/two_star"
+                android:contentDescription="@string/none"
+                android:src="@android:drawable/btn_star"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/three_star"
+                android:contentDescription="@string/none"
+                android:src="@android:drawable/btn_star"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/four_star"
+                android:contentDescription="@string/none"
+                android:src="@android:drawable/btn_star"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/five_star"
+                android:contentDescription="@string/none"
+                android:src="@android:drawable/btn_star"/>
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

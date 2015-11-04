@@ -1,6 +1,7 @@
 package com.example.cse5324.newdiary2;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -96,9 +97,9 @@ public class TripsFragment extends ListFragment implements MyListAdapter.MyListA
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         TripListItem item = (TripListItem)this.tripListItemList.get(position);
-        //Intent intent = new Intent(getActivity(), ViewEventActivity.class);
+        Intent intent = new Intent(getActivity(), ViewTripActivity.class);
         //put stuff in intent;
-        //startActivity(intent);
+        startActivity(intent);
     }
 
     @Override
