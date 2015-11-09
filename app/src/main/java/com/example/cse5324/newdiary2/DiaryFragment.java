@@ -83,12 +83,6 @@ public class DiaryFragment extends ListFragment implements MyListAdapter.MyListA
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        //((MainActivity) activity).onSectionAttached(4);
-    }
-
-    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         DiaryListItem item = (DiaryListItem)diaryListItemList.get(position);
         Intent intent = new Intent(getActivity(), ViewNoteActivity.class);

@@ -90,14 +90,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <EditText
+            <AutoCompleteTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapSentences|textPostalAddress|textMultiLine"
                 android:ems="10"
                 android:id="@+id/location"
                 android:hint="@string/location"
-                android:layout_weight="1" />
+                android:layout_weight="1">
+                <requestFocus />
+            </AutoCompleteTextView>
 
             <ImageButton
                 android:layout_width="wrap_content"

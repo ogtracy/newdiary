@@ -71,6 +71,13 @@
                 android:contentDescription="@string/none"
                 android:src="@android:drawable/btn_star"/>
         </LinearLayout>
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="1.0"
+            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
 </ScrollView>

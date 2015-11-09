@@ -39,6 +39,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 
@@ -326,7 +328,11 @@ public class MapsActivity extends Fragment implements
         urlString += ",";
         urlString += longitude;
         urlString += "&radius=500&name=";
-        urlString += searchString;
+        try {
+            urlString += URLEncoder.encode(searchString, "utf8");
+        } catch (UnsupportedEncodingException e) {
+            urlString += searchString;
+        }
         urlString += "&key=";
         urlString += API_KEY;
         new FindPlacesTask().execute(urlString);

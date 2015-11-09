@@ -44,9 +44,17 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/save_to_pdf"
+            android:layout_below="@+id/image"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/saveToPDF" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/delete"
             android:id="@+id/deleteButton"
-            android:layout_below="@+id/image"
+            android:layout_below="@+id/saveToPDF"
             android:layout_centerHorizontal="true"
             android:onClick="delete" />
 
