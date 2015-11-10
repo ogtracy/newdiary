@@ -78,8 +78,8 @@ public class TripsFragment extends ListFragment implements MyListAdapter.MyListA
             Calendar endTime = Calendar.getInstance();
             endTime.setTimeInMillis(Long.parseLong(end));
             long tripID = Long.parseLong(id);
-            TripListItem event= new TripListItem(title, description, location, tripID, startTime, endTime, imgPath, notes, events);
-            tripListItemList.add(event);
+            TripListItem trip= new TripListItem(title, description, location, tripID, startTime, endTime, imgPath, notes, events);
+            tripListItemList.add(trip);
             count++;
             c.moveToNext();
         }
