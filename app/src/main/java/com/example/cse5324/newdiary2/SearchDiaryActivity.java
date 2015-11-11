@@ -69,6 +69,7 @@ public class SearchDiaryActivity extends ListActivity {
                 c.moveToNext();
             }
             c.close();
+            db.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

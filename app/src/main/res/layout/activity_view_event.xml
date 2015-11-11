@@ -25,16 +25,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/eventName"
             android:hint="@string/event_name"
-            android:inputType="textCapWords" />
+            android:focusable="false" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
             android:ems="10"
             android:id="@+id/description"
             android:hint="@string/event_description"
-            android:minLines="4" />
+            android:minLines="4"
+            android:focusable="false" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -44,11 +44,11 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapSentences|textPostalAddress|textMultiLine"
                 android:ems="10"
                 android:id="@+id/location"
                 android:hint="@string/location"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:focusable="false" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -77,13 +77,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/date"
-                android:id="@+id/button2" />
+                android:id="@+id/startDate" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/time"
-                android:id="@+id/button3" />
+                android:id="@+id/startTime" />
         </LinearLayout>
 
         <LinearLayout
@@ -104,13 +104,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/date"
-                android:id="@+id/button4" />
+                android:id="@+id/endDate" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/time"
-                android:id="@+id/button5" />
+                android:id="@+id/endTime" />
         </LinearLayout>
 
         <ListView
@@ -120,58 +120,30 @@
             android:layout_weight="1"
             android:visibility="gone" />
 
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ratingBar"
+            android:layout_gravity="center_horizontal" />
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal" >
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal">
 
-            <ImageButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/one_star"
-                android:contentDescription="@string/none"
-                android:src="@android:drawable/btn_star"
-                android:background="#00ffffff"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit"
+                android:id="@+id/editButton" />
 
-            <ImageButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/two_star"
-                android:contentDescription="@string/none"
-                android:src="@android:drawable/btn_star"
-                android:background="#00ffffff"/>
-
-            <ImageButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/three_star"
-                android:contentDescription="@string/none"
-                android:src="@android:drawable/btn_star"
-                android:background="#00ffffff"/>
-
-            <ImageButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/four_star"
-                android:contentDescription="@string/none"
-                android:src="@android:drawable/btn_star"
-                android:background="#00ffffff"/>
-
-            <ImageButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/five_star"
-                android:contentDescription="@string/none"
-                android:src="@android:drawable/btn_star"
-                android:background="#00ffffff"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/save_to_pdf"
+                android:id="@+id/pdfSave" />
         </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/edit"
-            android:id="@+id/editButton"
-            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 </ScrollView>

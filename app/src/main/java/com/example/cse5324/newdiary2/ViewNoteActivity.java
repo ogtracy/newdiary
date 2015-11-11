@@ -61,6 +61,8 @@ public class ViewNoteActivity extends AppCompatActivity {
                 DBHelper dbHelper = new DBHelper(getApplicationContext());
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 db.delete(NoteContract.NoteEntry.TABLE_NAME, selection, selectionArgs);
+                db.close();
+
                 Toast.makeText(getApplicationContext(), "Item Deleted", Toast.LENGTH_LONG).show();
                 finish();
             }

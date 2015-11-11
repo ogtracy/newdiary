@@ -85,7 +85,7 @@ public class EventsFragment extends ListFragment implements MyListAdapter.MyList
             c.moveToNext();
         }
         c.close();
-
+        db.close();
     }
 
     @Override
@@ -99,7 +99,14 @@ public class EventsFragment extends ListFragment implements MyListAdapter.MyList
     public void onListItemClick(ListView l, View v, int position, long id) {
         EventListItem item = (EventListItem)this.eventListItemList.get(position);
         Intent intent = new Intent(getActivity(), ViewEventActivity.class);
-        //put stuff in intent;
+        intent.putExtra(EventListItem.EVENT_NAME, item.getName());
+        intent.putExtra(EventListItem.EVENT_DESCRIPTION, item.getDescription());
+        intent.putExtra(EventListItem.EVENT_LOCATION, item.getLocation());
+        intent.putExtra(EventListItem.IMAGE_PATH, item.getPicPath());
+        intent.putExtra(EventListItem.EVENT_ID, item.getID());
+        intent.putExtra(EventListItem.NOTES, item.getNotesString());
+        intent.putExtra(EventListItem.START_TIME, item.getStart().getTimeInMillis());
+        intent.putExtra(EventListItem.END_TIME, item.getEnd().getTimeInMillis());
         startActivity(intent);
     }
 
@@ -119,6 +126,8 @@ public class EventsFragment extends ListFragment implements MyListAdapter.MyList
         DBHelper dbHelper = new DBHelper(getActivity().getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(EventContract.EventEntry.TABLE_NAME, selection, selectionArgs);
+        db.close();
+
         adapter.remove(adapter.getItem(position));
         ContentResolver cr = getActivity().getApplicationContext().getContentResolver();
         Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, item.getID());

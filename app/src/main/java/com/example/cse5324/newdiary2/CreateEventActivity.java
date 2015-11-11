@@ -236,6 +236,7 @@ public class CreateEventActivity extends AppCompatActivity
         }
         values.put(EventContract.EventEntry.COLUMN_NAME_NOTE_IDS, noteIDs);
         long rowid=db.insert(EventContract.EventEntry.TABLE_NAME, "null", values);
+        db.close();
     }
 
     private void showTimePickerDialog(int buttonID) {

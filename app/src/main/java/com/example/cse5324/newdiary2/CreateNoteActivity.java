@@ -160,6 +160,7 @@ public class CreateNoteActivity extends AppCompatActivity {
         values.put(NoteContract.NoteEntry.COLUMN_NAME_TIME, time);
         values.put(NoteContract.NoteEntry.COLUMN_NAME_TITLE, title);
         long newRowId = db.insert(NoteContract.NoteEntry.TABLE_NAME, "null", values);
+        db.close();
         finish();
     }
 }

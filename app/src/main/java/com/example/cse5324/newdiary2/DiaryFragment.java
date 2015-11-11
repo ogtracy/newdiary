@@ -73,6 +73,7 @@ public class DiaryFragment extends ListFragment implements MyListAdapter.MyListA
                 c.moveToNext();
             }
         c.close();
+        db.close();
 
     }
     @Override
@@ -109,6 +110,7 @@ public class DiaryFragment extends ListFragment implements MyListAdapter.MyListA
         DBHelper dbHelper = new DBHelper(getActivity().getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(NoteContract.NoteEntry.TABLE_NAME, selection, selectionArgs);
+        db.close();
         adapter.remove(adapter.getItem(position));
         Toast.makeText(getActivity().getApplicationContext(), "Item Deleted", Toast.LENGTH_LONG).show();
     }

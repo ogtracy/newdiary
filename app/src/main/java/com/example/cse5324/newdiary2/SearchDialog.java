@@ -97,6 +97,7 @@ public class SearchDialog extends DialogFragment implements MyListAdapter.MyList
         } else {
             searchEvents(searchString, db);
         }
+        db.close();
     }
 
     private void searchEvents(String searchString, SQLiteDatabase db) {

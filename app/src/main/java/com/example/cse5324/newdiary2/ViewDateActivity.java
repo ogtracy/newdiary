@@ -66,7 +66,7 @@ public class ViewDateActivity extends AppCompatActivity implements ExpandableLis
 
     private void itemSelected(int groupPosition, int childPosition) {
         MyListItem item = (MyListItem) listAdapter.getChild(groupPosition, childPosition);
-        Intent intent = null;
+        Intent intent;
         if (item.getClass() == DiaryListItem.class){
             DiaryListItem note = (DiaryListItem)item;
             intent = new Intent(this, ViewNoteActivity.class);
@@ -77,16 +77,33 @@ public class ViewDateActivity extends AppCompatActivity implements ExpandableLis
         } else if (item.getClass() == EventListItem.class){
             EventListItem event = (EventListItem)item;
             intent = new Intent(this, ViewEventActivity.class);
+            intent.putExtra(EventListItem.EVENT_NAME, event.getName());
+            intent.putExtra(EventListItem.EVENT_DESCRIPTION, event.getDescription());
+            intent.putExtra(EventListItem.EVENT_LOCATION, event.getLocation());
+            intent.putExtra(EventListItem.IMAGE_PATH, event.getPicPath());
+            intent.putExtra(EventListItem.EVENT_ID, event.getID());
+            intent.putExtra(EventListItem.NOTES, event.getNotesString());
+            intent.putExtra(EventListItem.START_TIME, event.getStart().getTimeInMillis());
+            intent.putExtra(EventListItem.END_TIME, event.getEnd().getTimeInMillis());
         } else{
             TripListItem trip = (TripListItem)item;
             intent = new Intent(this, ViewTripActivity.class);
+            intent.putExtra(TripListItem.TRIP_NAME, trip.getName());
+            intent.putExtra(TripListItem.TRIP_DESCRIPTION, trip.getDescription());
+            intent.putExtra(TripListItem.TRIP_LOCATION, trip.getLocation());
+            intent.putExtra(TripListItem.IMAGE_PATH, trip.getPicPath());
+            intent.putExtra(TripListItem.TRIP_ID, trip.getID());
+            intent.putExtra(TripListItem.NOTES, trip.getNotesString());
+            intent.putExtra(TripListItem.EVENTS, trip.getEventsString());
+            intent.putExtra(TripListItem.START_TIME, trip.getStart().getTimeInMillis());
+            intent.putExtra(TripListItem.END_TIME, trip.getEnd().getTimeInMillis());
         }
         startActivity(intent);
     }
 
     private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<MyListItem>>();
+        listDataHeader = new ArrayList<>();
+        listDataChild = new HashMap<>();
 
         startTime.set(Calendar.HOUR_OF_DAY, 0);
         startTime.set(Calendar.MINUTE, 0);
@@ -175,6 +192,7 @@ public class ViewDateActivity extends AppCompatActivity implements ExpandableLis
             count++;
         }
         c.close();
+        db.close();
         return notes;
     }
 
@@ -229,7 +247,7 @@ public class ViewDateActivity extends AppCompatActivity implements ExpandableLis
             c.moveToNext();
         }
         c.close();
-
+        db.close();
         return events;
     }
 
@@ -311,6 +329,7 @@ public class ViewDateActivity extends AppCompatActivity implements ExpandableLis
                     new String[] {idString});
         }
         oldRating = rating;
+        db.close();
     }
 
     private void retrieveRating(){
@@ -345,6 +364,7 @@ public class ViewDateActivity extends AppCompatActivity implements ExpandableLis
             oldRating = this.rating;
         }
         c.close();
+        db.close();
         ratingBar.setRating(rating);
     }
 
@@ -403,6 +423,7 @@ public class ViewDateActivity extends AppCompatActivity implements ExpandableLis
             String selection = TripContract.TripEntry.COLUMN_NAME_TRIP_ID + "=?";
             db.delete(TripContract.TripEntry.TABLE_NAME, selection, selectionArgs);
         }
+        db.close();
         listAdapter.removeChild(groupPosition, childPosition);
         Toast.makeText(this, "Item Deleted", Toast.LENGTH_LONG).show();
     }

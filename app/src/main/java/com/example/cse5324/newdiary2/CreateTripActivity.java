@@ -207,6 +207,7 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
         values.put(TripContract.TripEntry.COLUMN_NAME_START, "" + start.getTimeInMillis());
         values.put(TripContract.TripEntry.COLUMN_NAME_END, ""+end.getTimeInMillis());
         long rowid=db.insert(TripContract.TripEntry.TABLE_NAME, "null", values);
+        db.close();
         finish();
     }
 

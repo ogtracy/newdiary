@@ -1,6 +1,5 @@
 package com.example.cse5324.newdiary2;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,8 +19,7 @@ public class TripsFragment extends ListFragment implements MyListAdapter.MyListA
     private TripListAdapter adapter;
 
     public static TripsFragment newInstance() {
-        TripsFragment fragment = new TripsFragment();
-        return fragment;
+        return new TripsFragment();
     }
 
     public TripsFragment() {}
@@ -84,7 +82,7 @@ public class TripsFragment extends ListFragment implements MyListAdapter.MyListA
             c.moveToNext();
         }
         c.close();
-
+        db.close();
     }
 
     @Override
@@ -98,7 +96,15 @@ public class TripsFragment extends ListFragment implements MyListAdapter.MyListA
     public void onListItemClick(ListView l, View v, int position, long id) {
         TripListItem item = (TripListItem)this.tripListItemList.get(position);
         Intent intent = new Intent(getActivity(), ViewTripActivity.class);
-        //put stuff in intent;
+        intent.putExtra(TripListItem.TRIP_NAME, item.getName());
+        intent.putExtra(TripListItem.TRIP_DESCRIPTION, item.getDescription());
+        intent.putExtra(TripListItem.TRIP_LOCATION, item.getLocation());
+        intent.putExtra(TripListItem.IMAGE_PATH, item.getPicPath());
+        intent.putExtra(TripListItem.TRIP_ID, item.getID());
+        intent.putExtra(TripListItem.NOTES, item.getNotesString());
+        intent.putExtra(TripListItem.EVENTS, item.getEventsString());
+        intent.putExtra(TripListItem.START_TIME, item.getStart().getTimeInMillis());
+        intent.putExtra(TripListItem.END_TIME, item.getEnd().getTimeInMillis());
         startActivity(intent);
     }
 
@@ -119,6 +125,8 @@ public class TripsFragment extends ListFragment implements MyListAdapter.MyListA
         DBHelper dbHelper = new DBHelper(getActivity().getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(TripContract.TripEntry.TABLE_NAME, selection, selectionArgs);
+        db.close();
+
         adapter.remove(adapter.getItem(index));
         Toast.makeText(getActivity().getApplicationContext(), "Item Deleted", Toast.LENGTH_LONG).show();
     }
