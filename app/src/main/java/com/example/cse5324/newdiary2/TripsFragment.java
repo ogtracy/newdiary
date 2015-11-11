@@ -100,7 +100,8 @@ public class TripsFragment extends ListFragment implements MyListAdapter.MyListA
         intent.putExtra(TripListItem.TRIP_DESCRIPTION, item.getDescription());
         intent.putExtra(TripListItem.TRIP_LOCATION, item.getLocation());
         intent.putExtra(TripListItem.IMAGE_PATH, item.getPicPath());
-        intent.putExtra(TripListItem.TRIP_ID, item.getID());
+        String itemID = "" + item.getID();
+        intent.putExtra(TripListItem.TRIP_ID, itemID);
         intent.putExtra(TripListItem.NOTES, item.getNotesString());
         intent.putExtra(TripListItem.EVENTS, item.getEventsString());
         intent.putExtra(TripListItem.START_TIME, item.getStart().getTimeInMillis());

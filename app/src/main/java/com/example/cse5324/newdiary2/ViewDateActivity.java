@@ -81,7 +81,8 @@ public class ViewDateActivity extends AppCompatActivity implements ExpandableLis
             intent.putExtra(EventListItem.EVENT_DESCRIPTION, event.getDescription());
             intent.putExtra(EventListItem.EVENT_LOCATION, event.getLocation());
             intent.putExtra(EventListItem.IMAGE_PATH, event.getPicPath());
-            intent.putExtra(EventListItem.EVENT_ID, event.getID());
+            String id = "" + event.getID();
+            intent.putExtra(EventListItem.EVENT_ID, id);
             intent.putExtra(EventListItem.NOTES, event.getNotesString());
             intent.putExtra(EventListItem.START_TIME, event.getStart().getTimeInMillis());
             intent.putExtra(EventListItem.END_TIME, event.getEnd().getTimeInMillis());
@@ -92,7 +93,8 @@ public class ViewDateActivity extends AppCompatActivity implements ExpandableLis
             intent.putExtra(TripListItem.TRIP_DESCRIPTION, trip.getDescription());
             intent.putExtra(TripListItem.TRIP_LOCATION, trip.getLocation());
             intent.putExtra(TripListItem.IMAGE_PATH, trip.getPicPath());
-            intent.putExtra(TripListItem.TRIP_ID, trip.getID());
+            String id = "" + trip.getID();
+            intent.putExtra(TripListItem.TRIP_ID, id);
             intent.putExtra(TripListItem.NOTES, trip.getNotesString());
             intent.putExtra(TripListItem.EVENTS, trip.getEventsString());
             intent.putExtra(TripListItem.START_TIME, trip.getStart().getTimeInMillis());

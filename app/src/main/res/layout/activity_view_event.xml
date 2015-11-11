@@ -124,6 +124,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ratingBar"
+            android:numStars="5"
+            android:stepSize="1.0"
             android:layout_gravity="center_horizontal" />
 
         <LinearLayout
@@ -141,8 +143,16 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/delete"
+                android:id="@+id/deleteButton"
+                android:onClick="delete" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/save_to_pdf"
-                android:id="@+id/pdfSave" />
+                android:id="@+id/pdfSave"
+                android:onClick="saveToPDF" />
         </LinearLayout>
 
     </LinearLayout>

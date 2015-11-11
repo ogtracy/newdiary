@@ -62,4 +62,6 @@ public class TripListItem extends MyListItem{
     public String getEventsString() {
         return eventsString;
     }
+
+
 }

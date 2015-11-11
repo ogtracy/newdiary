@@ -20,6 +20,7 @@ import java.util.List;
 public abstract class MyListAdapter extends ArrayAdapter {
     public static final int NONSELECTABLE = 037;
     public static final int SELECTABLE_NONDELETABLE = 805;
+    public static final int NONSELECTABLE_NONDELETABLE = 600;
     public static final int NOTE_TAG =922;
     public static final int EVENT_TAG = 900;
     public static final int TRIP_TAG = 800;
@@ -77,7 +78,9 @@ public abstract class MyListAdapter extends ArrayAdapter {
         holder.box.setTag(R.id.checkBox, position);
         if (listener.getType() == NONSELECTABLE) {
             holder.box.setVisibility(View.INVISIBLE);
-
+        } else if (listener.getType() == NONSELECTABLE_NONDELETABLE){
+            holder.box.setVisibility(View.INVISIBLE);
+            holder.deleteButton.setVisibility(View.INVISIBLE);
         } else {
             holder.deleteButton.setVisibility(View.INVISIBLE);
             holder.box.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {

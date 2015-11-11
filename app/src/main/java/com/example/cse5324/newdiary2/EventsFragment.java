@@ -103,7 +103,8 @@ public class EventsFragment extends ListFragment implements MyListAdapter.MyList
         intent.putExtra(EventListItem.EVENT_DESCRIPTION, item.getDescription());
         intent.putExtra(EventListItem.EVENT_LOCATION, item.getLocation());
         intent.putExtra(EventListItem.IMAGE_PATH, item.getPicPath());
-        intent.putExtra(EventListItem.EVENT_ID, item.getID());
+        String itemID = "" + item.getID();
+        intent.putExtra(EventListItem.EVENT_ID, itemID);
         intent.putExtra(EventListItem.NOTES, item.getNotesString());
         intent.putExtra(EventListItem.START_TIME, item.getStart().getTimeInMillis());
         intent.putExtra(EventListItem.END_TIME, item.getEnd().getTimeInMillis());
