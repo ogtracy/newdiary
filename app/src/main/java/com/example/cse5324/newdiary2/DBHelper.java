@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 8;
+    public static final int DATABASE_VERSION = 10;
     public static final String DATABASE_NAME = "FeedReader.db";
     private static final String TEXT_TYPE = " TEXT";
     private static final String INT_TYPE = " INT";
@@ -44,6 +44,12 @@ public class DBHelper extends SQLiteOpenHelper {
                     TripContract.TripEntry.COLUMN_NAME_IMG + TEXT_TYPE + COMMA_SEP +
                     TripContract.TripEntry.COLUMN_NAME_TRIP_ID + TEXT_TYPE + COMMA_SEP +
                     TripContract.TripEntry.COLUMN_NAME_LOCATION + TEXT_TYPE + " )";
+    private static final String SQL_CREATE_RATING_TABLE =
+            "CREATE TABLE " + RatingContract.RatingEntry.TABLE_NAME + " (" +
+                    RatingContract.RatingEntry._ID + " INTEGER PRIMARY KEY," +
+                    RatingContract.RatingEntry.COLUMN_NAME_RATING_ID + INT_TYPE + COMMA_SEP +
+                    RatingContract.RatingEntry.COLUMN_NAME_RATING + INT_TYPE + COMMA_SEP +
+                    RatingContract.RatingEntry.COLUMN_NAME_TYPE + INT_TYPE + " )";
 
     private static final String SQL_DELETE_NOTE_TABLE =
             "DROP TABLE IF EXISTS " + NoteContract.NoteEntry.TABLE_NAME;
@@ -51,6 +57,8 @@ public class DBHelper extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + EventContract.EventEntry.TABLE_NAME;
     private static final String SQL_DELETE_TRIP_TABLE =
             "DROP TABLE IF EXISTS " + TripContract.TripEntry.TABLE_NAME;
+    private static final String SQL_DELETE_RATING_TABLE =
+            "DROP TABLE IF EXISTS " + RatingContract.RatingEntry.TABLE_NAME;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -60,6 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL(SQL_CREATE_NOTE_TABLE);
             db.execSQL(SQL_CREATE_EVENT_TABLE);
             db.execSQL(SQL_CREATE_TRIP_TABLE);
+            db.execSQL(SQL_CREATE_RATING_TABLE);
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -69,6 +78,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_EVENT_TABLE);
         db.execSQL(SQL_DELETE_TRIP_TABLE);
         db.execSQL(SQL_DELETE_NOTE_TABLE);
+        db.execSQL(SQL_DELETE_RATING_TABLE);
         onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {

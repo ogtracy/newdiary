@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             e.printStackTrace();
         }
 
-        mDrawer.closeDrawers();
+
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // Highlight the selected item, update the title, and close the drawer
         menuItem.setChecked(true);
         setTitle(menuItem.getTitle());
+        mDrawer.closeDrawers();
 
     }
 

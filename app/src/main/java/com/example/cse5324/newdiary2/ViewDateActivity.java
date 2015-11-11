@@ -1,8 +1,12 @@
 package com.example.cse5324.newdiary2;
 
+
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,7 +21,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-public class ViewDateActivity extends AppCompatActivity implements MyListAdapter.MyListAdapterListener{
+public class ViewDateActivity extends AppCompatActivity implements ExpandableListAdapter.MyExpandableListAdapterListener{
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
@@ -25,12 +29,10 @@ public class ViewDateActivity extends AppCompatActivity implements MyListAdapter
     HashMap<String, List<MyListItem>> listDataChild;
 
     private TextView date;
-    private Calendar cal;
-    private float rating;
-    private DiaryListAdapter adapter;
-    private ArrayList<MyListItem> list;
     private Calendar startTime;
-    private Calendar endTime;
+    private float rating;
+    private RatingBar ratingBar;
+    private float oldRating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class ViewDateActivity extends AppCompatActivity implements MyListAdapter
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
         prepareListData();
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+        listAdapter.setListener(this);
         expListView.setAdapter(listAdapter);
         // Listview on child click listener
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -56,26 +59,45 @@ public class ViewDateActivity extends AppCompatActivity implements MyListAdapter
                 return false;
             }
         });
+
+        ratingBar = (RatingBar)findViewById(R.id.ratingBar);
+
     }
 
     private void itemSelected(int groupPosition, int childPosition) {
-        //call appropriate method to view item
+        MyListItem item = (MyListItem) listAdapter.getChild(groupPosition, childPosition);
+        Intent intent = null;
+        if (item.getClass() == DiaryListItem.class){
+            DiaryListItem note = (DiaryListItem)item;
+            intent = new Intent(this, ViewNoteActivity.class);
+            intent.putExtra("title", note.getName());
+            intent.putExtra("text", note.getDescription());
+            intent.putExtra("time", note.getDate().getTimeInMillis());
+            intent.putExtra("picPath", note.getPicPath());
+        } else if (item.getClass() == EventListItem.class){
+            EventListItem event = (EventListItem)item;
+            intent = new Intent(this, ViewEventActivity.class);
+        } else{
+            TripListItem trip = (TripListItem)item;
+            intent = new Intent(this, ViewTripActivity.class);
+        }
+        startActivity(intent);
     }
 
     private void prepareListData() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<MyListItem>>();
 
-        Calendar startTime = Calendar.getInstance();
-        startTime.setTime(cal.getTime());
         startTime.set(Calendar.HOUR_OF_DAY, 0);
         startTime.set(Calendar.MINUTE, 0);
         startTime.set(Calendar.SECOND, 0);
+        startTime.set(Calendar.MILLISECOND, 0);
         Calendar endTime = Calendar.getInstance();
-        endTime.setTime(cal.getTime());
+        endTime.setTime(startTime.getTime());
         endTime.set(Calendar.HOUR_OF_DAY, 23);
         endTime.set(Calendar.MINUTE, 59);
         endTime.set(Calendar.SECOND, 59);
+        endTime.set(Calendar.MILLISECOND, endTime.getActualMaximum(Calendar.MILLISECOND));
         long start = startTime.getTimeInMillis();
         long end = endTime.getTimeInMillis();
 
@@ -97,10 +119,10 @@ public class ViewDateActivity extends AppCompatActivity implements MyListAdapter
     private void setDate(){
         Intent intent = getIntent();
         long date = intent.getLongExtra(CalendarActivity.DATE, 0);
-        cal = Calendar.getInstance();
-        cal.setTimeInMillis(date);
+        startTime = Calendar.getInstance();
+        startTime.setTimeInMillis(date);
         DateFormat df = DateFormat.getDateInstance();
-        this.date.setText(df.format(cal.getTime()));
+        this.date.setText(df.format(startTime.getTime()));
     }
 
     public void addListenerOnRatingBar() {
@@ -266,30 +288,122 @@ public class ViewDateActivity extends AppCompatActivity implements MyListAdapter
         return trips;
     }
 
+    private void saveRating(){
+        DBHelper dbHelper = new DBHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        String _id = "" + startTime.getTimeInMillis();
+        values.put(RatingContract.RatingEntry._ID, _id);
+        values.put(RatingContract.RatingEntry.COLUMN_NAME_RATING_ID, _id);
+        values.put(RatingContract.RatingEntry.COLUMN_NAME_RATING, rating);
+        values.put(RatingContract.RatingEntry.COLUMN_NAME_TYPE, RatingContract.DATE_TYPE);
+        int id = (int) db.insertWithOnConflict(
+                RatingContract.RatingEntry.TABLE_NAME,
+                null,
+                values,
+                SQLiteDatabase.CONFLICT_IGNORE);
+        String idString = "" + _id;
+        if (id == -1) {
+            db.update(
+                    RatingContract.RatingEntry.TABLE_NAME,
+                    values,
+                    "_id=?",
+                    new String[] {idString});
+        }
+        oldRating = rating;
+    }
+
+    private void retrieveRating(){
+        DBHelper mDbHelper = new DBHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                RatingContract.RatingEntry._ID,
+                RatingContract.RatingEntry.COLUMN_NAME_RATING,
+                RatingContract.RatingEntry.COLUMN_NAME_RATING_ID,
+                RatingContract.RatingEntry.COLUMN_NAME_TYPE
+        };
+
+        String selection  = RatingContract.RatingEntry.COLUMN_NAME_TYPE + "=" +
+                RatingContract.DATE_TYPE +" AND " + RatingContract.RatingEntry.COLUMN_NAME_RATING_ID
+                + "=" + startTime.getTimeInMillis();
+
+        Cursor c = db.query(
+                RatingContract.RatingEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                 // The sort order
+        );
+        this.rating = 0;
+        oldRating = 0;
+        c.moveToFirst();
+        if (!c.isAfterLast()){
+            this.rating = c.getInt(c.getColumnIndexOrThrow(RatingContract.RatingEntry.COLUMN_NAME_RATING));
+            oldRating = this.rating;
+        }
+        c.close();
+        ratingBar.setRating(rating);
+    }
+
+
     private void setRating(float rating){
         this.rating = rating;
     }
 
     @Override
     public void onPause(){
-        //check if rating has changed
-        //if so, save rating;
+        if (oldRating != rating){
+            saveRating();
+        }
         super.onPause();
     }
 
     @Override
-    public void remove(int tag, int index) {
-
+    public void onResume(){
+        super.onResume();
+        retrieveRating();
     }
+
 
     @Override
-    public int getType() {
-        return MyListAdapter.NONSELECTABLE;
+    public void deleteItem(final int groupPosition, final int childPosition) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Deleting Note")
+                .setTitle("Confirmation Message");
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                delete(groupPosition, childPosition);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
-    @Override
-    public void check(int position, boolean isChecked) {
+    private void delete(int groupPosition, int childPosition){
+        MyListItem item = (MyListItem) listAdapter.getChild(groupPosition, childPosition);
+        String itemId = "" + item.getID();
+        String[] selectionArgs = {itemId};
+        DBHelper dbHelper = new DBHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+        if (item.getClass() == DiaryListItem.class) {
+            String selection = NoteContract.NoteEntry.COLUMN_NAME_TIME + "=?";
+            db.delete(NoteContract.NoteEntry.TABLE_NAME, selection, selectionArgs);
+        } else if (item.getClass() == EventListItem.class){
+            String selection = EventContract.EventEntry.COLUMN_NAME_EVENT_ID + "=?";
+            db.delete(EventContract.EventEntry.TABLE_NAME, selection, selectionArgs);
+        } else if (item.getClass() == TripListItem.class){
+            String selection = TripContract.TripEntry.COLUMN_NAME_TRIP_ID + "=?";
+            db.delete(TripContract.TripEntry.TABLE_NAME, selection, selectionArgs);
+        }
+        listAdapter.removeChild(groupPosition, childPosition);
+        Toast.makeText(this, "Item Deleted", Toast.LENGTH_LONG).show();
     }
-
 }

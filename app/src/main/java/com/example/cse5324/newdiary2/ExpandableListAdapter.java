@@ -23,7 +23,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<MyListItem>> _listDataChild;
-    MyListAdapter.MyListAdapterListener listener;
+    MyExpandableListAdapterListener listener;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<MyListItem>> listChildData) {
@@ -61,7 +61,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder.box = (CheckBox) convertView.findViewById(R.id.checkBox);
             holder.deleteButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    deleteItem(groupPosition, childPosition);
+                    listener.deleteItem(groupPosition, childPosition);
                 }
             });
             convertView.setTag(holder);
@@ -128,6 +128,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
+    public void removeChild(int group, int child) {
+        this._listDataChild.get(this._listDataHeader.get(group)).remove(child);
+        notifyDataSetChanged();
+    }
+
     private static class ViewHolder {
         ImageView icon;
         TextView title;
@@ -137,24 +142,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         CheckBox box;
     }
 
-    public void setListener(MyListAdapter.MyListAdapterListener listener){
+    public void setListener(MyExpandableListAdapterListener listener){
         this.listener = listener;
     }
 
-    private void deleteItem(final int groupPosition, final int childPosition){
-        //AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        //builder.setMessage("Deleting Note")
-        //        .setTitle("Confirmation Message");
-        //builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-        //    public void onClick(DialogInterface dialog, int id) {
-        //        listener.remove(tag, position);
-        //    }
-        //});
-        //builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-        //    public void onClick(DialogInterface dialog, int id) {
-        //    }
-        //});
-        //AlertDialog dialog = builder.create();
-        //dialog.show();
+    public interface MyExpandableListAdapterListener{
+        void deleteItem(int groupPosition, int childPosition);
     }
 }
