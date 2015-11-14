@@ -1,6 +1,6 @@
 package com.example.cse5324.newdiary2;
 
-import android.app.Activity;
+
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
@@ -145,21 +145,4 @@ public class EventsFragment extends ListFragment implements MyListAdapter.MyList
     public void check(int position, boolean isChecked) {
 
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        //public void onFragmentInteraction(String id);
-    }
-
-
 }

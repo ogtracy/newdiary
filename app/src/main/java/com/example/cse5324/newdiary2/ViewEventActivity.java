@@ -1,5 +1,7 @@
 package com.example.cse5324.newdiary2;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,7 +9,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.print.PrintManager;
+import android.provider.CalendarContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -181,6 +185,10 @@ public class ViewEventActivity extends AppCompatActivity implements MyListAdapte
                 db.delete(EventContract.EventEntry.TABLE_NAME, selection, selectionArgs);
                 db.close();
 
+                ContentResolver cr = getApplicationContext().getContentResolver();
+                Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI,
+                        Long.parseLong(itemId));
+                cr.delete(deleteUri, null, null);
                 Toast.makeText(getApplicationContext(), "Item Deleted", Toast.LENGTH_LONG).show();
                 finish();
             }
@@ -258,6 +266,21 @@ public class ViewEventActivity extends AppCompatActivity implements MyListAdapte
         c.close();
         db.close();
         ratingBar.setRating(rating);
+    }
+
+    public void editEvent(View v){
+        EventListItem item = (EventListItem)thisItem;
+        Intent intent = new Intent(this, CreateEventActivity.class);
+        intent.putExtra(EventListItem.EVENT_NAME, item.getName());
+        intent.putExtra(EventListItem.EVENT_DESCRIPTION, item.getDescription());
+        intent.putExtra(EventListItem.EVENT_LOCATION, item.getLocation());
+        intent.putExtra(EventListItem.IMAGE_PATH, item.getPicPath());
+        intent.putExtra(EventListItem.EVENT_ID, item.getID());
+        intent.putExtra(EventListItem.NOTES, item.getNotesString());
+        intent.putExtra(EventListItem.START_TIME, item.getStart().getTimeInMillis());
+        intent.putExtra(EventListItem.END_TIME, item.getEnd().getTimeInMillis());
+        startActivity(intent);
+        finish();
     }
 
     @Override

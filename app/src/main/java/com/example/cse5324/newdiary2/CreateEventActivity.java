@@ -1,6 +1,8 @@
 package com.example.cse5324.newdiary2;
 
+import android.app.usage.UsageEvents;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -42,8 +44,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -75,19 +79,117 @@ public class CreateEventActivity extends AppCompatActivity
     private ImageView image;
     private String picturePath;
     private ListView listView;
+    private boolean editing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
         getViews();
-        end = Calendar.getInstance();
-        endTimeSet = false;
-        endDateSet = false;
+
+        Intent intent = getIntent();
+        if (intent.hasExtra(EventListItem.EVENT_ID)){
+            editing = true;
+            setValues(intent);
+        } else {
+            editing = false;
+            end = Calendar.getInstance();
+            endTimeSet = false;
+            endDateSet = false;
+            start = Calendar.getInstance();
+            startTimeSet = false;
+            startDateSet = false;
+            picturePath = "";
+        }
+    }
+
+    private void setValues(Intent intent){
+        picturePath = intent.getStringExtra(EventListItem.IMAGE_PATH);
+        if (!picturePath.equals("")){
+            image.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+        }
+        setDate(intent);
+        eventName.setText(intent.getStringExtra(EventListItem.EVENT_NAME));
+        location.setText(intent.getStringExtra(EventListItem.EVENT_LOCATION));
+        description.setText(intent.getStringExtra(EventListItem.EVENT_DESCRIPTION));
+        populateListView();
+    }
+
+    private void populateListView(){
+        String notesString = getIntent().getStringExtra(EventListItem.NOTES);
+        ArrayList<String> notes = new ArrayList<>();
+        String notesList[] = notesString.split(" ");
+        for (int x=0; x<notesList.length; x++){
+            notes.add(notesList[x]);
+        }
+        if (notes.size() > 0){
+            retrieveNotes(notes);
+            listView.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    private void retrieveNotes(ArrayList<String> notesList){
+        DBHelper dbHelper = new DBHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String selection = "";
+        int x=0;
+        for (x =0; x<notesList.size()-1; x++){
+            String noteIDString = notesList.get(x);
+            selection = selection + NoteContract.NoteEntry.COLUMN_NAME_TIME + " = '"+ noteIDString +"' OR ";
+        }
+        String noteIDString = notesList.get(x);
+        selection = selection + NoteContract.NoteEntry.COLUMN_NAME_TIME + " = '" + noteIDString + "'";
+        String sortOrder = NoteContract.NoteEntry.COLUMN_NAME_TIME + " DESC";
+
+        Cursor c = db.query(
+                NoteContract.NoteEntry.TABLE_NAME,  // The table to query
+                null,                               // The columns to return
+                selection,                               // The columns for the WHERE clause
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            String itemTitle = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TITLE));
+            String itemText = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TEXT));
+            String itemTime = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TIME));
+            String itemIMG = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_IMG));
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(Long.parseLong(itemTime));
+            DiaryListItem item = new DiaryListItem(itemIMG, itemTitle, itemText, cal);
+            adapter.add(item);
+            c.moveToNext();
+        }
+        c.close();
+        db.close();
+    }
+
+    private void setDate(Intent intent){
+        long startTime = intent.getLongExtra(EventListItem.START_TIME, 0);
+        long endTime = intent.getLongExtra(EventListItem.END_TIME, 0);
         start = Calendar.getInstance();
-        startTimeSet = false;
-        startDateSet = false;
-        picturePath ="";
+        start.setTimeInMillis(startTime);
+        end = Calendar.getInstance();
+        end.setTimeInMillis(endTime);
+
+        DateFormat df = DateFormat.getDateInstance();
+        DateFormat tf = DateFormat.getTimeInstance();
+
+        Date d = start.getTime();
+        this.startDate.setText(df.format(d));
+        this.startTime.setText(tf.format(d));
+        startTimeSet = true;
+        startDateSet = true;
+
+        d = end.getTime();
+        this.endDate.setText(df.format(d));
+        this.endTime.setText(tf.format(d));
+        endTimeSet = true;
+        endDateSet = true;
     }
 
     private void getViews()
@@ -217,25 +319,36 @@ public class CreateEventActivity extends AppCompatActivity
 
     private void save(String eventName, String location, String description){
         boolean allowReminders = this.allowReminders.isChecked();
-        String eventID = "" + addEventToCalendar(eventName, description, location, allowReminders);
-
         DBHelper dbHelper = new DBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String noteIDs = "";
+        for (int x=0; x<adapter.getCount(); x++){
+            DiaryListItem item = (DiaryListItem)adapter.getItem(x);
+            noteIDs += item.getID() +" ";
+        }
+
         ContentValues values = new ContentValues();
         values.put(EventContract.EventEntry.COLUMN_NAME_EVENT, eventName);
         values.put(EventContract.EventEntry.COLUMN_NAME_START, "" + start.getTimeInMillis());
         values.put(EventContract.EventEntry.COLUMN_NAME_END, ""+end.getTimeInMillis());
         values.put(EventContract.EventEntry.COLUMN_NAME_LOCATION, location);
         values.put(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION, description);
-        values.put(EventContract.EventEntry.COLUMN_NAME_EVENT_ID, eventID);
         values.put(EventContract.EventEntry.COLUMN_NAME_IMG, picturePath);
-        String noteIDs = "";
-        for (int x=0; x<adapter.getCount(); x++){
-            DiaryListItem item = (DiaryListItem)adapter.getItem(x);
-            noteIDs += item.getID() +" ";
-        }
         values.put(EventContract.EventEntry.COLUMN_NAME_NOTE_IDS, noteIDs);
-        long rowid=db.insert(EventContract.EventEntry.TABLE_NAME, "null", values);
+
+        if (editing){
+            long id = getIntent().getLongExtra(EventListItem.EVENT_ID, 0);
+            String eventID = "" + id;
+            updateCalendarEvent(eventName, description, location, id);
+            values.put(EventContract.EventEntry.COLUMN_NAME_EVENT_ID, eventID);
+            db.update(EventContract.EventEntry.TABLE_NAME, values,
+                    EventContract.EventEntry.COLUMN_NAME_EVENT_ID + "=?", new String[]{eventID});
+        } else{
+            String eventID = "" + addEventToCalendar(eventName, description, location, allowReminders);
+            values.put(EventContract.EventEntry.COLUMN_NAME_EVENT_ID, eventID);
+            db.insert(EventContract.EventEntry.TABLE_NAME, "null", values);
+        }
         db.close();
     }
 
@@ -369,6 +482,29 @@ public class CreateEventActivity extends AppCompatActivity
             eventID = Long.valueOf(uri.getLastPathSegment());
         }
         return eventID;
+    }
+
+    private long updateCalendarEvent(String eventName, String eventDescription, String eventLocation, long id){
+        String calId = getCalendarId();
+        long eventID = 0;
+        if (calId == null) {
+            // no calendar account; react meaningfully
+            return -1;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(CalendarContract.Events.DTSTART, start.getTimeInMillis());
+        values.put(CalendarContract.Events.DTEND, end.getTimeInMillis());
+        values.put(CalendarContract.Events.TITLE, eventName);
+        values.put(CalendarContract.Events.CALENDAR_ID, calId);
+        values.put(CalendarContract.Events.DESCRIPTION, eventDescription);
+        values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getDisplayName(Locale.getDefault()));
+        values.put(CalendarContract.Events.EVENT_LOCATION, eventLocation);
+        ContentResolver cr = getApplicationContext().getContentResolver();
+        Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id);
+        long result = cr.update(updateUri, values, null, null);
+        return result;
     }
 
     public void pickLocation(View v){
