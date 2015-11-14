@@ -49,6 +49,17 @@ public class EventListItem extends MyListItem{
         return displayDate;
     }
 
+    @Override
+    public String getFormatted(){
+        String result = super.getFormatted();
+        result += "\n";
+        result += "Location: ";
+        result += this.location;
+        result += "\nTime:\n";
+        result += getDisplayDate();
+        return result;
+    }
+
     public Calendar getStart(){
         return start;
     }

@@ -1,9 +1,15 @@
 package com.example.cse5324.newdiary2;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.print.PrintManager;
+import android.provider.MediaStore;
+import android.speech.RecognizerIntent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,11 +19,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class ViewNoteActivity extends AppCompatActivity {
 
     private long timeValue;
+    private MyListItem thisItem;
+    private final int EDIT_CODE = 011;
     /*private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,
             Font.BOLD);
     private static Font redFont = new Font(Font.FontFamily.TIMES_ROMAN, 12,
@@ -39,14 +48,17 @@ public class ViewNoteActivity extends AppCompatActivity {
         Intent intent = getIntent();
         title.setText(intent.getStringExtra("title"));
         text.setText(intent.getStringExtra("text"));
-        if (!intent.getStringExtra("picPath").equals("")) {
-            image.setImageBitmap(BitmapFactory.decodeFile(intent.getStringExtra("picPath")));
+        String picPath = intent.getStringExtra("picPath");
+        if (!picPath.equals("")) {
+            image.setImageBitmap(BitmapFactory.decodeFile(picPath));
         }
         timeValue = intent.getLongExtra("time",0);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(timeValue);
         DateFormat df = DateFormat.getDateTimeInstance();
         time.setText(df.format(cal.getTime()));
+        thisItem = new DiaryListItem(picPath, title.getText().toString(), text.getText().toString(),
+                cal);
     }
 
     public void delete(View v){
@@ -73,6 +85,22 @@ public class ViewNoteActivity extends AppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public void saveToPDF(View v){
+        PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
+        String jobName = "Note " + thisItem.getName();
+        printManager.print(jobName, new MyPrintDocumentAdapter(this, thisItem, null), null);
+    }
+
+    public void editNote(View v){
+        Intent intent = new Intent(this, CreateNoteActivity.class);
+        intent.putExtra(DiaryListItem.TITLE, thisItem.getName());
+        intent.putExtra(DiaryListItem.TEXT, thisItem.getDescription());
+        intent.putExtra(DiaryListItem.TIME, thisItem.getID());
+        intent.putExtra(DiaryListItem.PIC_PATH, thisItem.getPicPath());
+        startActivity(intent);
+        finish();
     }
 
     //gotten from http://www.vogella.com/tutorials/JavaPDF/article.html

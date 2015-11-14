@@ -63,5 +63,14 @@ public class TripListItem extends MyListItem{
         return eventsString;
     }
 
-
+    @Override
+    public String getFormatted(){
+        String result = super.getFormatted();
+        result += "\n";
+        result += "Location: ";
+        result += this.location;
+        result += "\nTime:\n";
+        result += getDisplayDate();
+        return result;
+    }
 }

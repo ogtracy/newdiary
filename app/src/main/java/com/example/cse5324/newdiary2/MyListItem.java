@@ -1,5 +1,7 @@
 package com.example.cse5324.newdiary2;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 
 import java.text.DateFormat;
@@ -41,8 +43,21 @@ public abstract class MyListItem {
         return img;
     }
 
+    public Bitmap getBitmapPic(){
+        Bitmap pic = BitmapFactory.decodeFile(picPath);
+        if (picPath.equals("")){
+            return null;
+        }
+        return pic;
+    }
+
     public String getPicPath(){
         return picPath;
+    }
+
+    public String getFormatted(){
+        String result = "Description: " + description;
+        return result;
     }
 
 

@@ -1,11 +1,13 @@
 package com.example.cse5324.newdiary2;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
+import android.print.PrintManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +32,12 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
     private RatingBar ratingBar;
     private float oldRating;
     private String tripID;
+    private MyListItem thisItem;
+    private Calendar startCal;
+    private Calendar endCal;
+    private String notesString;
+    private String eventsString;
+    private ArrayList<MyListItem> children;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +62,18 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
         description.setText(intent.getStringExtra(TripListItem.TRIP_DESCRIPTION));
         location.setText(intent.getStringExtra(TripListItem.TRIP_LOCATION));
         tripID = intent.getStringExtra(TripListItem.TRIP_ID);
-        if (!intent.getStringExtra(TripListItem.IMAGE_PATH).equals("")) {
-            image.setImageBitmap(BitmapFactory.decodeFile(intent.getStringExtra(TripListItem.IMAGE_PATH)));
+        String imgPath = intent.getStringExtra(TripListItem.IMAGE_PATH);
+        if (!imgPath.equals("")) {
+            image.setImageBitmap(BitmapFactory.decodeFile(imgPath));
         } else {
             image.setVisibility(View.GONE);
         }
         setButtons();
         setupListView();
         populateListView();
+        thisItem = new TripListItem(eventName.getText().toString(), description.getText().toString(),
+                location.getText().toString(), Long.parseLong(tripID), startCal, endCal, imgPath,
+                notesString, eventsString);
     }
 
     private void setButtons(){
@@ -75,13 +87,13 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
         DateFormat tf = DateFormat.getTimeInstance();
 
         long start = getIntent().getLongExtra(TripListItem.START_TIME, 0);
-        Calendar startCal= Calendar.getInstance();
+        startCal= Calendar.getInstance();
         startCal.setTimeInMillis(start);
         startDate.setText(df.format(startCal.getTime()));
         startTime.setText(tf.format(startCal.getTime()));
 
         long end = getIntent().getLongExtra(TripListItem.END_TIME, 0);
-        Calendar endCal = Calendar.getInstance();
+        endCal = Calendar.getInstance();
         endCal.setTimeInMillis(end);
         endDate.setText(df.format(endCal.getTime()));
         endTime.setText(tf.format(endCal.getTime()));
@@ -100,8 +112,9 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
     }
 
     private void populateListView(){
-        String notesString = getIntent().getStringExtra(TripListItem.NOTES);
-        String eventsString = getIntent().getStringExtra(TripListItem.EVENTS);
+        children = new ArrayList<>();
+        notesString = getIntent().getStringExtra(TripListItem.NOTES);
+        eventsString = getIntent().getStringExtra(TripListItem.EVENTS);
         ArrayList<String> notes = new ArrayList<>();
         ArrayList<String> events = new ArrayList<>();
 
@@ -165,6 +178,7 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
             long eventID = Long.parseLong(id);
             EventListItem event= new EventListItem(eventTitle, eventDescription, eventLocation, eventID, start, end, imgPath, notes);
             adapter.add(event);
+            children.add(event);
             c.moveToNext();
         }
         c.close();
@@ -202,7 +216,9 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
             String itemIMG = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_IMG));
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(Long.parseLong(itemTime));
-            adapter.add(new DiaryListItem(itemIMG, itemTitle, itemText, cal));
+            DiaryListItem item = new DiaryListItem(itemIMG, itemTitle, itemText, cal);
+            adapter.add(item);
+            children.add(item);
             c.moveToNext();
         }
         c.close();
@@ -236,7 +252,9 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
     }
 
     public void saveToPDF(View v){
-
+        PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
+        String jobName = "Trip " + thisItem.getName();
+        printManager.print(jobName, new MyPrintDocumentAdapter(this, thisItem, children), null);
     }
 
     private void retrieveRating(){
@@ -302,6 +320,22 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
         }
         oldRating = rating;
         db.close();
+    }
+
+    public void editTrip(View v){
+        Intent intent = new Intent(this, CreateTripActivity.class);
+        TripListItem item = (TripListItem)thisItem;
+        intent.putExtra(TripListItem.TRIP_NAME, item.getName());
+        intent.putExtra(TripListItem.TRIP_DESCRIPTION, item.getDescription());
+        intent.putExtra(TripListItem.TRIP_LOCATION, item.getLocation());
+        intent.putExtra(TripListItem.IMAGE_PATH, item.getPicPath());
+        intent.putExtra(TripListItem.TRIP_ID, item.getID());
+        intent.putExtra(TripListItem.NOTES, item.getNotesString());
+        intent.putExtra(TripListItem.EVENTS, item.getEventsString());
+        intent.putExtra(TripListItem.START_TIME, item.getStart().getTimeInMillis());
+        intent.putExtra(TripListItem.END_TIME, item.getEnd().getTimeInMillis());
+        startActivity(intent);
+        finish();
     }
 
     @Override

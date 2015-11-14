@@ -23,8 +23,10 @@ import android.widget.Toast;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class CreateTripActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSelectionListener,
         DatePickerFragment.OnDateSelectionListener, SearchDialog.AddNoteListener,
@@ -43,21 +45,178 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
     private Calendar end;
     private boolean endDateSet;
     private boolean endTimeSet;
-    String picturePath;
+    private String picturePath;
+    private boolean editing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_trip);
         getViews();
-        end = Calendar.getInstance();
-        endTimeSet = false;
-        endDateSet = false;
-        start = Calendar.getInstance();
-        startTimeSet = false;
-        startDateSet = false;
-        picturePath ="";
+
+        Intent intent = getIntent();
+        if (intent.hasExtra(TripListItem.TRIP_ID)){
+            editing = true;
+            setValues(intent);
+        } else {
+            editing = false;
+            end = Calendar.getInstance();
+            endTimeSet = false;
+            endDateSet = false;
+            start = Calendar.getInstance();
+            startTimeSet = false;
+            startDateSet = false;
+            picturePath = "";
+        }
     }
+
+    private void setValues(Intent intent) {
+        picturePath = intent.getStringExtra(TripListItem.IMAGE_PATH);
+        if (!picturePath.equals("")){
+            image.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+        }
+        setDate(intent);
+        title.setText(intent.getStringExtra(TripListItem.TRIP_NAME));
+        location.setText(intent.getStringExtra(TripListItem.TRIP_LOCATION));
+        description.setText(intent.getStringExtra(TripListItem.TRIP_DESCRIPTION));
+        populateListView();
+    }
+
+    private void populateListView(){
+        String notesString = getIntent().getStringExtra(TripListItem.NOTES);
+        String eventsString = getIntent().getStringExtra(TripListItem.EVENTS);
+        ArrayList<String> notes = new ArrayList<>();
+        ArrayList<String> events = new ArrayList<>();
+
+        String notesList[] = notesString.split(" ");
+        for (int x=0; x<notesList.length; x++){
+            notes.add(notesList[x]);
+        }
+        String eventsList[] = eventsString.split(" ");
+        for (int x=0; x<eventsList.length; x++){
+            events.add(eventsList[x]);
+        }
+        if (notes.size() > 0){
+            retrieveNotes(notes);
+            listView.setVisibility(View.VISIBLE);
+        }
+        if (events.size() > 0){
+            retrieveEvents(events);
+            listView.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    private void retrieveNotes(ArrayList<String> notesList){
+        DBHelper dbHelper = new DBHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String selection = "";
+        int x=0;
+        for (x =0; x<notesList.size()-1; x++){
+            String noteIDString = notesList.get(x);
+            selection = selection + NoteContract.NoteEntry.COLUMN_NAME_TIME + " = '"+ noteIDString +"' OR ";
+        }
+        String noteIDString = notesList.get(x);
+        selection = selection + NoteContract.NoteEntry.COLUMN_NAME_TIME + " = '" + noteIDString + "'";
+        String sortOrder = NoteContract.NoteEntry.COLUMN_NAME_TIME + " DESC";
+
+        Cursor c = db.query(
+                NoteContract.NoteEntry.TABLE_NAME,  // The table to query
+                null,                               // The columns to return
+                selection,                               // The columns for the WHERE clause
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+
+        c.moveToFirst();
+        while (!c.isAfterLast()) {
+            String itemTitle = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TITLE));
+            String itemText = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TEXT));
+            String itemTime = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_TIME));
+            String itemIMG = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_IMG));
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(Long.parseLong(itemTime));
+            DiaryListItem item = new DiaryListItem(itemIMG, itemTitle, itemText, cal);
+            adapter.add(item);
+            c.moveToNext();
+        }
+        c.close();
+        db.close();
+    }
+
+    private void retrieveEvents(ArrayList<String> eventsList){
+        DBHelper dbHelper = new DBHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String selection = "";
+        int x=0;
+        for (x =0; x<eventsList.size()-1; x++){
+            String eventIDString = eventsList.get(x);
+            selection = selection + EventContract.EventEntry.COLUMN_NAME_EVENT_ID + " = '"+ eventIDString +"' OR ";
+        }
+        String eventIDString = eventsList.get(x);
+        selection = selection + EventContract.EventEntry.COLUMN_NAME_EVENT_ID + " = '" + eventIDString + "'";
+        String sortOrder = EventContract.EventEntry.COLUMN_NAME_START + " DESC";
+
+        Cursor c = db.query(
+                EventContract.EventEntry.TABLE_NAME,  // The table to query
+                null,                               // The columns to return
+                selection,                               // The columns for the WHERE clause
+                null,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+        c.moveToFirst();
+
+        while (!c.isAfterLast()) {
+            String eventTitle = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_EVENT));
+            String eventDescription = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION));
+            String eventStart = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_START));
+            String eventEnd = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_END));
+            String eventLocation = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_LOCATION));
+            String id = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_EVENT_ID));
+            String imgPath = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_IMG));
+            String notes = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_NOTE_IDS));
+
+            Calendar start = Calendar.getInstance();
+            start.setTimeInMillis(Long.parseLong(eventStart));
+            Calendar end = Calendar.getInstance();
+            start.setTimeInMillis(Long.parseLong(eventEnd));
+            long eventID = Long.parseLong(id);
+            EventListItem event= new EventListItem(eventTitle, eventDescription, eventLocation, eventID, start, end, imgPath, notes);
+            adapter.add(event);
+            c.moveToNext();
+        }
+        c.close();
+        db.close();
+    }
+
+    private void setDate(Intent intent){
+        long startTime = intent.getLongExtra(TripListItem.START_TIME, 0);
+        long endTime = intent.getLongExtra(TripListItem.END_TIME, 0);
+        start = Calendar.getInstance();
+        start.setTimeInMillis(startTime);
+        end = Calendar.getInstance();
+        end.setTimeInMillis(endTime);
+
+        DateFormat df = DateFormat.getDateInstance();
+        DateFormat tf = DateFormat.getTimeInstance();
+
+        Date d = start.getTime();
+        this.startDate.setText(df.format(d));
+        this.startTime.setText(tf.format(d));
+        startTimeSet = true;
+        startDateSet = true;
+
+        d = end.getTime();
+        this.endDate.setText(df.format(d));
+        this.endTime.setText(tf.format(d));
+        endTimeSet = true;
+        endDateSet = true;
+    }
+
 
     private void getViews()
     {
@@ -101,27 +260,6 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
         adapter = new DiaryListAdapter(this, list);
         adapter.setListener(this);
         listView.setAdapter(adapter);
-        listView.setOnTouchListener(new ListView.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        // Disallow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        // Allow ScrollView to intercept touch events.
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
-                }
-
-                // Handle ListView touch events.
-                v.onTouchEvent(event);
-                return true;
-            }
-        });
     }
 
     public void importImage(View v){
@@ -185,28 +323,39 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
     {
         DBHelper dbHelper = new DBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        String id = "" + Calendar.getInstance().getTimeInMillis();
+
         String noteIDs = "";
         String eventIDs = "";
-        for (int x=0; x<adapter.getCount(); x++){
-            MyListItem item = (MyListItem)adapter.getItem(x);
-            if (item.getClass() == DiaryListItem.class){
-                noteIDs += item.getID() +" ";
+        for (int x = 0; x < adapter.getCount(); x++) {
+            MyListItem item = (MyListItem) adapter.getItem(x);
+            if (item.getClass() == DiaryListItem.class) {
+                noteIDs += item.getID() + " ";
             } else {
                 eventIDs += item.getID() + " ";
             }
         }
+
+        ContentValues values = new ContentValues();
         values.put(TripContract.TripEntry.COLUMN_NAME_TITLE, title);
         values.put(TripContract.TripEntry.COLUMN_NAME_LOCATION, location);
         values.put(TripContract.TripEntry.COLUMN_NAME_DESCRIPTION, description);
         values.put(TripContract.TripEntry.COLUMN_NAME_IMG, picturePath);
-        values.put(TripContract.TripEntry.COLUMN_NAME_TRIP_ID, id);
         values.put(TripContract.TripEntry.COLUMN_NAME_EVENT_IDS, eventIDs);
         values.put(TripContract.TripEntry.COLUMN_NAME_NOTE_IDS, noteIDs);
         values.put(TripContract.TripEntry.COLUMN_NAME_START, "" + start.getTimeInMillis());
-        values.put(TripContract.TripEntry.COLUMN_NAME_END, ""+end.getTimeInMillis());
-        long rowid=db.insert(TripContract.TripEntry.TABLE_NAME, "null", values);
+        values.put(TripContract.TripEntry.COLUMN_NAME_END, "" + end.getTimeInMillis());
+
+        if (editing){
+            String id = "" + getIntent().getLongExtra(TripListItem.TRIP_ID, 0);
+            values.put(TripContract.TripEntry.COLUMN_NAME_TRIP_ID, id);
+            db.update(TripContract.TripEntry.TABLE_NAME, values,
+                    TripContract.TripEntry.COLUMN_NAME_TRIP_ID + "=?", new String[]{id});
+        } else {
+
+            String id = "" + Calendar.getInstance().getTimeInMillis();
+            values.put(TripContract.TripEntry.COLUMN_NAME_TRIP_ID, id);
+            db.insert(TripContract.TripEntry.TABLE_NAME, "null", values);
+        }
         db.close();
         finish();
     }

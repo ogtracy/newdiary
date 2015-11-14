@@ -1,11 +1,13 @@
 package com.example.cse5324.newdiary2;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
+import android.print.PrintManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,6 +31,11 @@ public class ViewEventActivity extends AppCompatActivity implements MyListAdapte
     private RatingBar ratingBar;
     private float oldRating;
     private String eventID;
+    private ArrayList<MyListItem> children;
+    private MyListItem thisItem;
+    private Calendar startCal;
+    private Calendar endCal;
+    private String notesString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +61,17 @@ public class ViewEventActivity extends AppCompatActivity implements MyListAdapte
         description.setText(intent.getStringExtra(EventListItem.EVENT_DESCRIPTION));
         location.setText(intent.getStringExtra(EventListItem.EVENT_LOCATION));
         eventID = intent.getStringExtra(EventListItem.EVENT_ID);
-        if (!intent.getStringExtra(EventListItem.IMAGE_PATH).equals("")) {
-            image.setImageBitmap(BitmapFactory.decodeFile(intent.getStringExtra(EventListItem.IMAGE_PATH)));
+        String imgPath = intent.getStringExtra(EventListItem.IMAGE_PATH);
+        if (!imgPath.equals("")) {
+            image.setImageBitmap(BitmapFactory.decodeFile(imgPath));
         } else {
             image.setVisibility(View.GONE);
         }
         setButtons();
         setupListView();
         populateListView();
+        thisItem = new EventListItem(eventName.getText().toString(), description.getText().toString(),
+                location.getText().toString(), Long.parseLong(eventID), startCal, endCal, imgPath, notesString);
     }
 
     private void setRating(float rating){
@@ -79,13 +89,13 @@ public class ViewEventActivity extends AppCompatActivity implements MyListAdapte
         DateFormat tf = DateFormat.getTimeInstance();
 
         long start = getIntent().getLongExtra(EventListItem.START_TIME, 0);
-        Calendar startCal= Calendar.getInstance();
+        startCal= Calendar.getInstance();
         startCal.setTimeInMillis(start);
         startDate.setText(df.format(startCal.getTime()));
         startTime.setText(tf.format(startCal.getTime()));
 
         long end = getIntent().getLongExtra(EventListItem.END_TIME, 0);
-        Calendar endCal = Calendar.getInstance();
+        endCal = Calendar.getInstance();
         endCal.setTimeInMillis(end);
         endDate.setText(df.format(endCal.getTime()));
         endTime.setText(tf.format(endCal.getTime()));
@@ -103,8 +113,9 @@ public class ViewEventActivity extends AppCompatActivity implements MyListAdapte
     }
 
     private void populateListView(){
-        String notesString = getIntent().getStringExtra(TripListItem.NOTES);
+        notesString = getIntent().getStringExtra(TripListItem.NOTES);
         ArrayList<String> notes = new ArrayList<>();
+        children = new ArrayList<>();
 
         String notesList[] = notesString.split(" ");
         for (String note : notesList){
@@ -147,7 +158,9 @@ public class ViewEventActivity extends AppCompatActivity implements MyListAdapte
             String itemIMG = c.getString(c.getColumnIndexOrThrow(NoteContract.NoteEntry.COLUMN_NAME_IMG));
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(Long.parseLong(itemTime));
-            adapter.add(new DiaryListItem(itemIMG, itemTitle, itemText, cal));
+            DiaryListItem item = new DiaryListItem(itemIMG, itemTitle, itemText, cal);
+            adapter.add(item);
+            children.add(item);
             c.moveToNext();
         }
         c.close();
@@ -181,7 +194,9 @@ public class ViewEventActivity extends AppCompatActivity implements MyListAdapte
     }
 
     public void saveToPDF(View v){
-
+        PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
+        String jobName = "Event " + thisItem.getName();
+        printManager.print(jobName, new MyPrintDocumentAdapter(this, thisItem, children), null);
     }
 
     private void saveRating(){

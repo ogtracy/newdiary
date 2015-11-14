@@ -33,18 +33,43 @@ public class CreateNoteActivity extends AppCompatActivity {
     private final int SPEECH_INPUT = 555;
     private final int RESULT_LOAD_IMAGE =745;
     private Calendar cal;
+    private Button dateButton;
+    private Button timeButton;
+    private boolean editing;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_note);
+        editing = false;
         getViews();
+        cal = Calendar.getInstance();
+        Intent intent = getIntent();
+        if (!intent.hasExtra(DiaryListItem.TIME)) {
+            setDate();
+        } else {
+            editing = true;
+            setValues(intent);
+        }
+    }
+
+    private void setValues(Intent intent) {
+        long timeValue = intent.getLongExtra(DiaryListItem.TIME,0);
+        cal.setTimeInMillis(timeValue);
+        setDate();
+
+        title.setText(intent.getStringExtra(DiaryListItem.TITLE));
+        text.setText(intent.getStringExtra(DiaryListItem.TEXT));
+        picturePath = intent.getStringExtra(DiaryListItem.PIC_PATH);
+        if (!picturePath.equals("")){
+            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+        }
     }
 
     private void getViews(){
-        Button dateButton = (Button) findViewById(R.id.dateButton);
-        Button timeButton = (Button) findViewById(R.id.timeButton);
+        dateButton = (Button) findViewById(R.id.dateButton);
+        timeButton = (Button) findViewById(R.id.timeButton);
         title = (EditText) findViewById(R.id.title);
         text = (EditText) findViewById(R.id.text);
         imageView = (ImageView) findViewById(R.id.imageView);
@@ -56,14 +81,14 @@ public class CreateNoteActivity extends AppCompatActivity {
                 promptSpeechInput();
             }
         });
+    }
 
-        cal = Calendar.getInstance();
+    private void setDate(){
         Date d = cal.getTime();
         DateFormat df = DateFormat.getDateInstance();
         DateFormat tf = DateFormat.getTimeInstance();
         dateButton.setText(df.format(d));
         timeButton.setText(tf.format(d));
-
     }
 
     private void promptSpeechInput() {
@@ -91,7 +116,8 @@ public class CreateNoteActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && null != data) {
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    text.setText(text.getText() + " " +result.get(0));
+                    String newText = text.getText() + " " +result.get(0);
+                    text.setText(newText);
                 }
                 break;
             }
@@ -159,7 +185,12 @@ public class CreateNoteActivity extends AppCompatActivity {
         values.put(NoteContract.NoteEntry.COLUMN_NAME_TEXT, text);
         values.put(NoteContract.NoteEntry.COLUMN_NAME_TIME, time);
         values.put(NoteContract.NoteEntry.COLUMN_NAME_TITLE, title);
-        long newRowId = db.insert(NoteContract.NoteEntry.TABLE_NAME, "null", values);
+        if (editing){
+            db.update(NoteContract.NoteEntry.TABLE_NAME, values,
+                    NoteContract.NoteEntry.COLUMN_NAME_TIME+"=?", new String[] {time});
+        } else {
+            db.insert(NoteContract.NoteEntry.TABLE_NAME, "null", values);
+        }
         db.close();
         finish();
     }
