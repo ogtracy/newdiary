@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.print.PrintManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -20,12 +22,23 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class ViewTripActivity extends AppCompatActivity implements MyListAdapter.MyListAdapterListener {
 
+    private static final String LOG_TAG = "Emotions";
     private DiaryListAdapter adapter;
     private ListView listView;
     private float rating;
@@ -252,9 +265,31 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
     }
 
     public void saveToPDF(View v){
-        PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
-        String jobName = "Trip " + thisItem.getName();
-        printManager.print(jobName, new MyPrintDocumentAdapter(this, thisItem, children), null);
+        File pdfFolder = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS), "Emotions");
+        if (!pdfFolder.mkdirs()) {
+            Log.e(LOG_TAG, "Directory not created");
+            //Toast.makeText(getApplicationContext(), "Directory could not be created", Toast.LENGTH_LONG).show();
+        }
+        Date date = new Date() ;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(date);
+        String filename = thisItem.getName() + "_" +timeStamp + ".pdf";
+        File myFile = new File(pdfFolder, filename);
+
+        try {
+            OutputStream output = new FileOutputStream(myFile);
+            Document document = new Document();
+            PdfWriter.getInstance(document, output);
+            document.open();
+            document.add(new Paragraph(thisItem.getName()));
+            document.add(new Paragraph(thisItem.getFormatted()));
+            document.close();
+            Toast.makeText(getApplicationContext(), "File Successfully Created", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "PDF File could not be created", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void retrieveRating(){
