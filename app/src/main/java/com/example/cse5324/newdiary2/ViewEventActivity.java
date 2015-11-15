@@ -26,8 +26,11 @@ import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.Image;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,6 +56,8 @@ public class ViewEventActivity extends AppCompatActivity implements MyListAdapte
     private Calendar startCal;
     private Calendar endCal;
     private String notesString;
+
+    private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,7 +236,18 @@ public class ViewEventActivity extends AppCompatActivity implements MyListAdapte
             Document document = new Document();
             PdfWriter.getInstance(document, output);
             document.open();
-            document.add(new Paragraph(thisItem.getName()));
+            document.add(new Paragraph(thisItem.getName(), catFont));
+
+            String imgPath = thisItem.getPicPath();
+            Image img;
+            if (!imgPath.equals("")) {
+                img = Image.getInstance(thisItem.getPicPath());
+                if (img.getScaledWidth() > 300 || img.getScaledHeight() > 300) {
+                    img.scaleToFit(300, 300);
+                }
+                document.add(img);
+            }
+
             document.add(new Paragraph(thisItem.getFormatted()));
             document.close();
             Toast.makeText(getApplicationContext(), "File Successfully Created", Toast.LENGTH_LONG).show();

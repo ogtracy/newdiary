@@ -23,6 +23,8 @@ import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.itextpdf.text.Document;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -51,6 +53,8 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
     private String notesString;
     private String eventsString;
     private ArrayList<MyListItem> children;
+
+    private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -281,7 +285,18 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
             Document document = new Document();
             PdfWriter.getInstance(document, output);
             document.open();
-            document.add(new Paragraph(thisItem.getName()));
+            document.add(new Paragraph(thisItem.getName(), catFont));
+
+            String imgPath = thisItem.getPicPath();
+            Image img;
+            if (!imgPath.equals("")) {
+                img = Image.getInstance(thisItem.getPicPath());
+                if (img.getScaledWidth() > 300 || img.getScaledHeight() > 300) {
+                    img.scaleToFit(300, 300);
+                }
+                document.add(img);
+            }
+
             document.add(new Paragraph(thisItem.getFormatted()));
             document.close();
             Toast.makeText(getApplicationContext(), "File Successfully Created", Toast.LENGTH_LONG).show();
@@ -289,7 +304,6 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "PDF File could not be created", Toast.LENGTH_LONG).show();
         }
-
     }
 
     private void retrieveRating(){

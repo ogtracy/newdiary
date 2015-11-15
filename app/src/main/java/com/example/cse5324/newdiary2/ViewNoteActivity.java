@@ -28,6 +28,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
@@ -53,6 +54,8 @@ public class ViewNoteActivity extends AppCompatActivity {
     private long timeValue;
     private MyListItem thisItem;
     private static final String LOG_TAG = "E-Motions";
+
+    private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +142,18 @@ public class ViewNoteActivity extends AppCompatActivity {
             Document document = new Document();
             PdfWriter.getInstance(document, output);
             document.open();
-            document.add(new Paragraph(thisItem.getName()));
+            document.add(new Paragraph(thisItem.getName(), catFont));
+
+            String imgPath = thisItem.getPicPath();
+            Image img;
+            if (!imgPath.equals("")) {
+                img = Image.getInstance(thisItem.getPicPath());
+                if (img.getScaledWidth() > 300 || img.getScaledHeight() > 300) {
+                    img.scaleToFit(300, 300);
+                }
+                document.add(img);
+            }
+
             document.add(new Paragraph(thisItem.getFormatted()));
             document.close();
             Toast.makeText(getApplicationContext(), "File Successfully Created", Toast.LENGTH_LONG).show();
