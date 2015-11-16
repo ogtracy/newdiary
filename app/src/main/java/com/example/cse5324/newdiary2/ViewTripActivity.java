@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Environment;
 import android.print.PrintManager;
 import android.support.v7.app.AlertDialog;
@@ -53,6 +54,7 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
     private String notesString;
     private String eventsString;
     private ArrayList<MyListItem> children;
+    private EditText location;
 
     private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
 
@@ -63,7 +65,7 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
 
         ImageView image = (ImageView) findViewById(R.id.image);
         EditText eventName = (EditText)findViewById(R.id.trip_name);
-        EditText location = (EditText)findViewById(R.id.location);
+        location = (EditText)findViewById(R.id.location);
         EditText description = (EditText)findViewById(R.id.description);
 
         ratingBar = (RatingBar)findViewById(R.id.ratingBar);
@@ -114,9 +116,6 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
         endCal.setTimeInMillis(end);
         endDate.setText(df.format(endCal.getTime()));
         endTime.setText(tf.format(endCal.getTime()));
-
-        Button editButton = (Button)findViewById(R.id.editButton);
-        Button exportButton = (Button)findViewById(R.id.exportButton);
     }
 
     private void setupListView(){
@@ -296,14 +295,35 @@ public class ViewTripActivity extends AppCompatActivity implements MyListAdapter
                 }
                 document.add(img);
             }
-
             document.add(new Paragraph(thisItem.getFormatted()));
+
+            for (MyListItem child : children){
+                document.add(new Paragraph(child.getName(), catFont));
+                String childImg= child.getPicPath();
+                if (!childImg.equals("")){
+                    Image image = Image.getInstance(childImg);
+                    if (image.getScaledWidth() > 300 || image.getScaledHeight() > 300) {
+                        image.scaleToFit(300, 300);
+                    }
+                    document.add(image);
+                }
+                document.add(new Paragraph(child.getFormatted()));
+            }
+
             document.close();
             Toast.makeText(getApplicationContext(), "File Successfully Created", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "PDF File could not be created", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void navigate(View v){
+        String uri = "google.navigation:q=" + location.getText();
+        Uri gmmIntentUri = Uri.parse(uri);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        startActivity(mapIntent);
     }
 
     private void retrieveRating(){

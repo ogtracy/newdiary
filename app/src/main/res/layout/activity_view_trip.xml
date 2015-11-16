@@ -58,7 +58,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton"
                 android:src="@drawable/navigate"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:onClick="navigate" />
         </LinearLayout>
 
         <LinearLayout

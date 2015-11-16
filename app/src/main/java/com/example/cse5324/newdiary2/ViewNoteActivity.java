@@ -108,12 +108,6 @@ public class ViewNoteActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    /*public void saveToPDF(View v){
-        PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
-        String jobName = "Note " + thisItem.getName();
-        printManager.print(jobName, new MyPrintDocumentAdapter(this, thisItem, null), null);
-    }*/
-
     public void editNote(View v){
         Intent intent = new Intent(this, CreateNoteActivity.class);
         intent.putExtra(DiaryListItem.TITLE, thisItem.getName());

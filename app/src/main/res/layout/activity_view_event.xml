@@ -56,7 +56,7 @@
                 android:id="@+id/navigateButton"
                 android:src="@drawable/navigate"
                 android:layout_weight="1"
- />
+                android:onClick="navigate" />
         </LinearLayout>
 
         <LinearLayout
