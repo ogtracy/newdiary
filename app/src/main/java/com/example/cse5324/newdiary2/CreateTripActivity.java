@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -14,26 +16,46 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 public class CreateTripActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSelectionListener,
         DatePickerFragment.OnDateSelectionListener, SearchDialog.AddNoteListener,
-        MyListAdapter.MyListAdapterListener{
+        MyListAdapter.MyListAdapterListener, AdapterView.OnItemSelectedListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        ShowPlacesDialog.PlaceSelectedListener {
 
     private static final int RESULT_LOAD_IMAGE = 1998;
     private static final int PLACE_PICKER_REQUEST = 458;
+    private HashMap<String, ArrayList<String>> PLACES_TYPE_MAP;
+    private static final String API_KEY = "AIzaSyBVlkkszs7guzsQn2rWp-0WPofvIMSyz7I";
+
     private EditText title,location,description;
     private ImageView image;
     private ListView listView;
@@ -47,11 +69,16 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
     private boolean endTimeSet;
     private String picturePath;
     private boolean editing;
+    private Spinner placeTypes;
+    private Button suggestionsButton;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_trip);
+        initializePlacesMap();
         getViews();
 
         Intent intent = getIntent();
@@ -68,6 +95,21 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
             startDateSet = false;
             picturePath = "";
         }
+        buildGoogleApiClient();
+    }
+    private void initializePlacesMap() {
+        PLACES_TYPE_MAP = new HashMap<>();
+        String[] shopping = getResources().getStringArray(R.array.shopping_place_types);
+        String[] fun = getResources().getStringArray(R.array.fun_place_types);
+        String[] business = getResources().getStringArray(R.array.business_place_types);
+        String[] drink = getResources().getStringArray(R.array.drink_place_types);
+        String[] food = getResources().getStringArray(R.array.food_place_types);
+
+        PLACES_TYPE_MAP.put("food", new ArrayList<>(Arrays.asList(food)));
+        PLACES_TYPE_MAP.put("drink", new ArrayList<>(Arrays.asList(drink)));
+        PLACES_TYPE_MAP.put("business", new ArrayList<>(Arrays.asList(business)));
+        PLACES_TYPE_MAP.put("fun", new ArrayList<>(Arrays.asList(fun)));
+        PLACES_TYPE_MAP.put("shopping", new ArrayList<>(Arrays.asList(shopping)));
     }
 
     private void setValues(Intent intent) {
@@ -260,6 +302,37 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
         adapter = new DiaryListAdapter(this, list);
         adapter.setListener(this);
         listView.setAdapter(adapter);
+        listView.setOnTouchListener(new ListView.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+
+                // Handle ListView touch events.
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
+
+        placeTypes = (Spinner)findViewById(R.id.placeTypes);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.place_types, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        placeTypes.setAdapter(adapter);
+        placeTypes.setOnItemSelectedListener(this);
+
+        suggestionsButton = (Button)findViewById(R.id.suggestions);
+        suggestionsButton.setVisibility(View.INVISIBLE);
     }
 
     public void importImage(View v){
@@ -498,6 +571,130 @@ public class CreateTripActivity extends AppCompatActivity implements TimePickerF
             startActivityForResult(builder.build(context), PLACE_PICKER_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        //stuff for when spinner choice is made
+        suggestionsButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        suggestionsButton.setVisibility(View.INVISIBLE);
+    }
+
+    public void getPlaceSuggestions(View v){
+        Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (currentLocation == null){
+            currentLocation = mLastLocation;
+        }
+        if (currentLocation == null){
+            return;
+        }
+        String type = (String) placeTypes.getSelectedItem();
+        String urlString = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
+        urlString += mLastLocation.getLatitude();
+        urlString += ",";
+        urlString += mLastLocation.getLongitude();
+        urlString += "&radius=500&types=";
+        ArrayList<String> typeArray = PLACES_TYPE_MAP.get(type.toLowerCase());
+        if (typeArray == null || typeArray.size() == 0){
+            return;
+        }
+        String searchTypes = "";
+        int x = 0;
+        for (x=0; x<typeArray.size()-1; x++){
+            searchTypes += typeArray.get(x);
+            searchTypes += "|";
+        }
+        searchTypes += typeArray.get(x);
+
+        try {
+            urlString += URLEncoder.encode(searchTypes, "utf8");
+        } catch (UnsupportedEncodingException e) {
+            urlString += searchTypes;
+        }
+        urlString += "&key=";
+        urlString += API_KEY;
+        new FindPlacesTask().execute(urlString);
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void placeSelected(MyPlace place) {
+        location.setText(place.getName());
+    }
+
+    class FindPlacesTask extends AsyncTask<String, Void, String> {
+
+        protected String doInBackground(String... urls) {
+            StringBuilder jsonResults = new StringBuilder();
+            HttpURLConnection conn;
+
+            try {
+                URL url = new URL(urls[0]);
+                conn = (HttpURLConnection) url.openConnection();
+
+                InputStreamReader in = new InputStreamReader(conn.getInputStream());
+                // Load the results into a StringBuilder
+                int read;
+                char[] buff = new char[1024];
+                while ((read = in.read(buff)) != -1) {
+                    jsonResults.append(buff, 0, read);
+                }
+            }catch(MalformedURLException e){
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+                e.getMessage();
+            }
+            return jsonResults.toString();
+        }
+
+        protected void onPostExecute(String feed) {
+            DialogFragment newFragment = new ShowPlacesDialog();
+            Bundle bundle = new Bundle();
+            bundle.putString(ShowPlacesDialog.SEARCH_RESULT, feed);
+            newFragment.setArguments(bundle);
+            newFragment.show(getSupportFragmentManager(), "show_place_search_results");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
         }
     }
 }

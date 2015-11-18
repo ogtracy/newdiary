@@ -46,11 +46,62 @@
         <item>Trips</item>
     </string-array>
 
-    <string-array name="purpose_array">
+    <string-array name="place_types">
         <item>Food</item>
         <item>Drink</item>
         <item>Business</item>
         <item>Fun</item>
+        <item>Shopping</item>
+    </string-array>
+
+    <string-array name="shopping_place_types">
+        <item>bicycle_store</item>
+        <item>book_store</item>
+        <item>clothing_store</item>
+        <item>convenience_store</item>
+        <item>department_store</item>
+        <item>electronics_store</item>
+        <item>furniture_store</item>
+        <item>grocery_or_supermarket</item>
+        <item>hardware_store</item>
+        <item>home_goods_store</item>
+        <item>jewelry_store"</item>
+    </string-array>
+    <string-array name="fun_place_types">
+        <item>amusement_park</item>
+        <item>aquarium</item>
+        <item>art_gallery</item>
+        <item>bowling_alley</item>
+        <item>casino</item>
+        <item>movie_theater</item>
+        <item>museum</item>
+        <item>night_club</item>
+        <item>park</item>
+        <item>shoe_store</item>
+        <item>shopping_mall</item>
+        <item>spa</item>
+        <item>stadium</item>
+        <item>point_of_interest</item>
+    </string-array>
+
+    <string-array name="business_place_types">
+        <item>finance</item>
+        <item>insurance_agency</item>
+        <item>lawyer</item>
+        <item>local_government_office</item>
+        <item>post_office</item>
+    </string-array>
+
+    <string-array name="drink_place_types">
+        <item>liquor_store</item>
+        <item>bar</item>
+    </string-array>
+
+    <string-array name="food_place_types">
+        <item>bakery</item>
+        <item>cafe</item>
+        <item>food</item>
+        <item>restaurant</item>
     </string-array>
 
     <string name="home">Home</string>
@@ -124,4 +175,5 @@
     <string name="edit">Edit</string>
     <string name="export_to_pdf">Export to PDF</string>
     <string name="save_to_pdf">Save To PDF</string>
+    <string name="get_place_suggestions">Get Place Suggestions</string>
 </resources>

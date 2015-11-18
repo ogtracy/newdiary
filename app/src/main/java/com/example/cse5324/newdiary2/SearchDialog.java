@@ -117,7 +117,8 @@ public class SearchDialog extends DialogFragment implements MyListAdapter.MyList
             int count = 0;
             while (!c.isAfterLast() && count<MAX_SEARCH_RESULTS) {
                 String eventTitle = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_EVENT));
-                String eventDescription = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_DESCRIPTION));
+                String eventDescription = c.getString(c.getColumnIndexOrThrow(
+                        EventContract.EventEntry.COLUMN_NAME_DESCRIPTION));
                 String eventStart = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_START));
                 String eventEnd = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_END));
                 String eventLocation = c.getString(c.getColumnIndexOrThrow(EventContract.EventEntry.COLUMN_NAME_LOCATION));
@@ -130,7 +131,8 @@ public class SearchDialog extends DialogFragment implements MyListAdapter.MyList
                 Calendar end = Calendar.getInstance();
                 start.setTimeInMillis(Long.parseLong(eventEnd));
                 long eventID = Long.parseLong(id);
-                EventListItem event= new EventListItem(eventTitle, eventDescription, eventLocation, eventID, start, end, imgPath, notes);
+                EventListItem event= new EventListItem(eventTitle, eventDescription, eventLocation,
+                        eventID, start, end, imgPath, notes);
                 adapter.add(event);
                 c.moveToNext();
                 count++;

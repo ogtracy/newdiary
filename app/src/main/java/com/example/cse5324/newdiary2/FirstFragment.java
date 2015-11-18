@@ -180,6 +180,12 @@ public class FirstFragment extends Fragment {
         super.onPause();
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        hasChanged = false;
+    }
+
     public void showItem(View v){
         System.out.println("boo");
     }

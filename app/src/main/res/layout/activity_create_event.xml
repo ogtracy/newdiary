@@ -28,7 +28,27 @@
             android:layout_height="wrap_content"
             android:id="@+id/eventName"
             android:hint="@string/event_name"
-            android:inputType="textCapWords" />
+            android:inputType="textCapWords"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/place_types"
+                android:layout_weight="3" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/get_place_suggestions"
+                android:id="@+id/placeSuggestions"
+                android:onClick="getPlaceSuggestions" />
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"

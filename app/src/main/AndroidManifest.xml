@@ -69,8 +69,6 @@
         </activity>
         <activity android:name=".ViewDateActivity" >
         </activity>
-        <activity android:name=".SearchDiaryActivity" >
-        </activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"

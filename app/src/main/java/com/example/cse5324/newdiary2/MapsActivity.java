@@ -398,8 +398,8 @@ public class MapsActivity extends Fragment implements
 
                 text = e.toString();
                 System.out.println(text);
-            } catch (Exception var20) {
-                var20.getMessage();
+            } catch (Exception e) {
+                e.getMessage();
             } finally {
                 try {
                     if(in != null) {
@@ -409,8 +409,8 @@ public class MapsActivity extends Fragment implements
                     if(reader != null) {
                         reader.close();
                     }
-                } catch (IOException var19) {
-                    var19.getMessage();
+                } catch (IOException e) {
+                    e.getMessage();
                 }
 
             }
