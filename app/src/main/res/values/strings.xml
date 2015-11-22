@@ -183,7 +183,5 @@
     <string name="med">Medium</string>
     <string name="lrg">Large</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="free_draw">Free Draw</string>
 </resources>

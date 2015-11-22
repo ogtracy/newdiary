@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 /**
  * Created by arun prasad on 28-09-2015.
+ *
  */
 public class SecondFragment extends Fragment {
 
@@ -28,8 +29,7 @@ public class SecondFragment extends Fragment {
     private OnFragmentInteractionListener listener;
 
     public static SecondFragment newInstance() {
-        SecondFragment fragment = new SecondFragment();
-        return fragment;
+        return new SecondFragment();
     }
 
     public SecondFragment() {
@@ -121,6 +121,12 @@ public class SecondFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         listener = (OnFragmentInteractionListener)activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 
     private void goToNext() {

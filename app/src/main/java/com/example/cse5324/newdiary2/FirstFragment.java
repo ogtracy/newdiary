@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 /**
  * Created by arun prasad on 28-09-2015.
+ *
  */
 /*This class is used for implementing Personal app part*/
 public class FirstFragment extends Fragment {
@@ -126,23 +127,23 @@ public class FirstFragment extends Fragment {
         birthDay = (Spinner) rootView.findViewById(R.id.spinner2);//adding day values
         String[] values1 =
                 {"Day", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
-        ArrayAdapter<String> LTRadapter1 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, values1);
-        LTRadapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        birthDay.setAdapter(LTRadapter1);
+        ArrayAdapter<String> LTRAdapter1 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, values1);
+        LTRAdapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        birthDay.setAdapter(LTRAdapter1);
 
         birthMonth = (Spinner) rootView.findViewById(R.id.spinner3);//adding month field
         String[] values2 =
                 {"Month", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        ArrayAdapter<String> LTRadapter2 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, values2);
-        LTRadapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        birthMonth.setAdapter(LTRadapter2);
+        ArrayAdapter<String> LTRAdapter2 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, values2);
+        LTRAdapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        birthMonth.setAdapter(LTRAdapter2);
 
         romanticStatus = (Spinner) rootView.findViewById(R.id.spinner5);//adding fields for relationship
         String[] values4 =
                 {"Single", "Married", "Divorced", "In a Relationship"};
-        ArrayAdapter<String> LTRadapter4 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, values4);
-        LTRadapter4.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        romanticStatus.setAdapter(LTRadapter4);
+        ArrayAdapter<String> LTRAdapter4 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, values4);
+        LTRAdapter4.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        romanticStatus.setAdapter(LTRAdapter4);
 
         birthYear = (Spinner) rootView.findViewById(R.id.spinner4);//generating year field
         String[] values3 = new String[140];
@@ -154,22 +155,28 @@ public class FirstFragment extends Fragment {
 
 
         }
-        ArrayAdapter<String> LTRadapter3 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, values3);
-        LTRadapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        birthYear.setAdapter(LTRadapter3);
+        ArrayAdapter<String> LTRAdapter3 = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, values3);
+        LTRAdapter2.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        birthYear.setAdapter(LTRAdapter3);
 
         sunSign = (Spinner) rootView.findViewById(R.id.spinner);
         String[] values =
                 {"------Select Your Sun Sign------", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"};
-        ArrayAdapter<String> LTRadapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, values);
-        LTRadapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        sunSign.setAdapter(LTRadapter);
+        ArrayAdapter<String> LTRAdapter = new ArrayAdapter<>(this.getActivity(), android.R.layout.simple_spinner_item, values);
+        LTRAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        sunSign.setAdapter(LTRAdapter);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         listener = (OnFragmentInteractionListener)activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 
     @Override
@@ -184,10 +191,6 @@ public class FirstFragment extends Fragment {
     public void onResume(){
         super.onResume();
         hasChanged = false;
-    }
-
-    public void showItem(View v){
-        System.out.println("boo");
     }
 
     private void saveProfile(){
@@ -220,7 +223,6 @@ public class FirstFragment extends Fragment {
 
     private class MyTextWatcher implements TextWatcher {
 
-        private View view;
         private MyTextWatcher() {
         }
 

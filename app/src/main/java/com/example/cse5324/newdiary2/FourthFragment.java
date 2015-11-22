@@ -14,13 +14,11 @@ import android.widget.Toast;
 
 /**
  * Created by arun prasad on 28-09-2015.
+ *
  */
 //java file for thoughts
 public class FourthFragment extends Fragment {
 
-    private Button saveButton;
-    private Button prevButton;
-    private Button nextButton;
     private EditText oneWord;
     private EditText superPower;
     private EditText mostImportant;
@@ -29,8 +27,7 @@ public class FourthFragment extends Fragment {
     private OnFragmentInteractionListener listener;
 
     public static FourthFragment newInstance() {
-        FourthFragment fragment = new FourthFragment();
-        return fragment;
+        return new FourthFragment();
     }
 
     public FourthFragment() {
@@ -45,19 +42,19 @@ public class FourthFragment extends Fragment {
         mostImportant = (EditText)rootView.findViewById(R.id.most_important);
         bestQuality = (EditText)rootView.findViewById(R.id.best_quality);
         laugh = (EditText)rootView.findViewById(R.id.laugh);
-        saveButton = (Button)rootView.findViewById(R.id.createNoteButton);
+        Button saveButton = (Button) rootView.findViewById(R.id.createNoteButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveProfile();
             }
         });
-        nextButton = (Button)rootView.findViewById(R.id.nextButton);
-        nextButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
+        Button nextButton = (Button) rootView.findViewById(R.id.nextButton);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 goToNext();
             }
         });
-        prevButton = (Button)rootView.findViewById(R.id.prevButton);
+        Button prevButton = (Button) rootView.findViewById(R.id.prevButton);
         prevButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 goToPrev();
@@ -120,6 +117,12 @@ public class FourthFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         listener = (OnFragmentInteractionListener)activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 
     private void goToNext() {

@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 /**
  * Created by arun prasad on 28-09-2015.
+ *
  */
 public class ThirdFragment extends Fragment {
 
@@ -156,6 +157,12 @@ public class ThirdFragment extends Fragment {
     public void onPause(){
         saveProfile();
         super.onPause();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
     }
 
     @Override

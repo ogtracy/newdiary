@@ -174,9 +174,6 @@ public class CreateNoteActivity extends AppCompatActivity {
         saveInDB(title, text, time);
     }
 
-    /**
-     * TODO make this an AsyncTask so it doesn't stall the rest of the app.
-     */
     private void saveInDB(String title, String text, String time) {
         DBHelper dbHelper = new DBHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
