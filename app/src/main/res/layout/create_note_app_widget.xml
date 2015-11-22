@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="@dimen/widget_margin"
+    android:orientation="vertical">
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/createNoteButton"
+        android:src="@drawable/new_note"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/createEventButton"
+        android:src="@drawable/event"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/createTripButton"
+        android:src="@drawable/trip"
+        android:layout_weight="1" />
+
+</LinearLayout>

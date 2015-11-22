@@ -156,7 +156,7 @@ public class CreateEventActivity extends AppCompatActivity
         DBHelper dbHelper = new DBHelper(this);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String selection = "";
-        int x=0;
+        int x;
         for (x =0; x<notesList.size()-1; x++){
             String noteIDString = notesList.get(x);
             selection = selection + NoteContract.NoteEntry.COLUMN_NAME_TIME + " = '"+ noteIDString +"' OR ";
@@ -509,16 +509,33 @@ public class CreateEventActivity extends AppCompatActivity
         values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().getDisplayName(Locale.getDefault()));
         values.put(CalendarContract.Events.EVENT_LOCATION, eventLocation);
-        Uri uri = getApplicationContext().getContentResolver().insert(CalendarContract.Events.CONTENT_URI, values);
+        ContentResolver cr = getApplicationContext().getContentResolver();
+        Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
         if (uri != null) {
             eventID = Long.valueOf(uri.getLastPathSegment());
+            if (allowReminders){
+                setReminder(cr, eventID, 5);
+                setReminder(cr, eventID, 60);
+                setReminder(cr, eventID, 1440);
+            }
         }
         return eventID;
     }
 
+    private void setReminder(ContentResolver cr, long eventID, int timeBefore) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(CalendarContract.Reminders.MINUTES, timeBefore);
+            values.put(CalendarContract.Reminders.EVENT_ID, eventID);
+            values.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT);
+            cr.insert(CalendarContract.Reminders.CONTENT_URI, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private long updateCalendarEvent(String eventName, String eventDescription, String eventLocation, long id){
         String calId = getCalendarId();
-        long eventID = 0;
         if (calId == null) {
             // no calendar account; react meaningfully
             return -1;
@@ -535,8 +552,7 @@ public class CreateEventActivity extends AppCompatActivity
         values.put(CalendarContract.Events.EVENT_LOCATION, eventLocation);
         ContentResolver cr = getApplicationContext().getContentResolver();
         Uri updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id);
-        long result = cr.update(updateUri, values, null, null);
-        return result;
+        return cr.update(updateUri, values, null, null);
     }
 
     public void pickLocation(View v){
@@ -614,7 +630,7 @@ public class CreateEventActivity extends AppCompatActivity
             return;
         }
         String searchTypes = "";
-        int x = 0;
+        int x;
         for (x=0; x<typeArray.size()-1; x++){
             searchTypes += typeArray.get(x);
             searchTypes += "|";

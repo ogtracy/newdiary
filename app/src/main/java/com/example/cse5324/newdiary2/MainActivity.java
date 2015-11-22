@@ -123,6 +123,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
             case R.id.trips:
                 fragmentClass = TripsFragment.class;
                 break;
+            case R.id.freeDraw:
+                fragmentClass = FreeDrawFragment.class;
+                break;
             default:
                 fragmentClass = HomeFragment.class;
         }

@@ -60,7 +60,7 @@ public class FirstFragment extends Fragment {
             }
         });
 
-        saveButton = (Button)rootView.findViewById(R.id.saveButton);
+        saveButton = (Button)rootView.findViewById(R.id.createNoteButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveProfile();

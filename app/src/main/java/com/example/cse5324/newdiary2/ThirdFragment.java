@@ -57,7 +57,7 @@ public class ThirdFragment extends Fragment {
         favSinger = (EditText)rootView.findViewById(R.id.fav_singer);
         favDrink = (EditText)rootView.findViewById(R.id.fav_drink);
 
-        saveButton = (Button)rootView.findViewById(R.id.saveButton);
+        saveButton = (Button)rootView.findViewById(R.id.createNoteButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveProfile();

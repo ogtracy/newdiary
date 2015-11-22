@@ -30,4 +30,7 @@
         </menu>
     </item>
 
+    <item android:id="@+id/freeDraw"
+        android:title="@string/free_draw"/>
+
 </menu>

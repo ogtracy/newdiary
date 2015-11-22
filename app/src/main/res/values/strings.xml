@@ -176,4 +176,14 @@
     <string name="export_to_pdf">Export to PDF</string>
     <string name="save_to_pdf">Save To PDF</string>
     <string name="get_place_suggestions">Get Place Suggestions</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+
+    <string name="sml">Small</string>
+    <string name="med">Medium</string>
+    <string name="lrg">Large</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="free_draw">Free Draw</string>
 </resources>

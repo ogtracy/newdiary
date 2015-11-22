@@ -44,7 +44,7 @@ public class SecondFragment extends Fragment {
         currentGoal = (EditText)rootView.findViewById(R.id.cur_goal);
         whereToLive = (EditText)rootView.findViewById(R.id.where_to_live);
 
-        saveButton = (Button)rootView.findViewById(R.id.saveButton);
+        saveButton = (Button)rootView.findViewById(R.id.createNoteButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveProfile();

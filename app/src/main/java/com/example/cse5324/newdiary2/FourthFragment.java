@@ -45,7 +45,7 @@ public class FourthFragment extends Fragment {
         mostImportant = (EditText)rootView.findViewById(R.id.most_important);
         bestQuality = (EditText)rootView.findViewById(R.id.best_quality);
         laugh = (EditText)rootView.findViewById(R.id.laugh);
-        saveButton = (Button)rootView.findViewById(R.id.saveButton);
+        saveButton = (Button)rootView.findViewById(R.id.createNoteButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveProfile();
