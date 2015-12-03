@@ -64,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         } else if (item.getItemId() == R.id.new_trip) {
             Intent intent = new Intent(this, CreateTripActivity.class);
             startActivity(intent);
+        } else if (item.getItemId() == R.id.new_card){
+            Intent intent = new Intent(this, NewCardActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

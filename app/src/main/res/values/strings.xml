@@ -184,4 +184,7 @@
     <string name="lrg">Large</string>
 
     <string name="free_draw">Free Draw</string>
+    <string name="new_card">New Card</string>
+    <string name="password">Password</string>
+    <string name="expiry_date">Expiry Date</string>
 </resources>
